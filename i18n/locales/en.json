@@ -1,0 +1,113 @@
+{
+  "nav": {
+    "type": "Type",
+    "leaderboard": "Leaderboard",
+    "daily": "Daily",
+    "about": "About",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "signIn": "Sign in",
+    "signUp": "Sign up"
+  },
+  "footer": {
+    "tagline": "Type. Measure. Improve.",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "source": "Source"
+  },
+  "common": {
+    "loading": "Loading…",
+    "comingSoon": "Coming soon",
+    "empty": "Nothing here yet."
+  },
+  "home": {
+    "hint": "Click the text and start typing",
+    "restart": "Tab or Esc to restart"
+  },
+  "settings": {
+    "title": "Settings",
+    "theme": "Theme",
+    "appearance": "Appearance",
+    "behavior": "Behavior",
+    "sound": "Sound",
+    "language": "Language",
+    "account": "Account",
+    "fontSize": "Font size",
+    "fontFamily": "Font",
+    "textWidth": "Text width",
+    "caretStyle": "Caret style",
+    "smoothCaret": "Smooth caret",
+    "showLiveWpm": "Show live WPM",
+    "showLiveAccuracy": "Show live accuracy",
+    "showTimer": "Show timer",
+    "focusMode": "Focus mode",
+    "reduceMotion": "Reduce motion",
+    "quickRestart": "Quick restart",
+    "defaultLanguage": "Default language",
+    "soundEnabled": "Key sounds",
+    "volume": "Volume",
+    "publicProfile": "Public profile",
+    "clearHistory": "Clear local history",
+    "reset": "Reset settings"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "username": "Username",
+    "unavailable": "Accounts are not configured on this deployment yet. Guest mode still works.",
+    "haveAccount": "Already have an account?",
+    "noAccount": "Need an account?"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "empty": "No ranked results yet. Be the first."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "guestTitle": "Local progress",
+    "guestHint": "Sign in to sync across devices and join leaderboards.",
+    "today": "Today",
+    "tests": "Tests",
+    "avgWpm": "Avg WPM",
+    "bestWpm": "Best WPM",
+    "accuracy": "Accuracy",
+    "heatmap": "Activity",
+    "history": "Recent tests"
+  },
+  "seo": {
+    "home": {
+      "title": "Free Typing Test with Progress Tracking",
+      "description": "Free typing test in English, Indonesian, code, and quotes. Track WPM, accuracy, daily streaks, and climb fair leaderboards."
+    },
+    "leaderboard": {
+      "title": "Typing Leaderboards - Daily, Weekly, All-Time",
+      "description": "See the fastest typists by language, mode, and period. Fair, replay-verified typing leaderboards."
+    },
+    "daily": {
+      "title": "Daily Typing Challenge",
+      "description": "The same typing text for everyone, every day. Compare your WPM and accuracy on today's challenge."
+    },
+    "about": {
+      "title": "About",
+      "description": "How Tachy measures WPM, accuracy, and progress, plus live community statistics."
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Customize themes, typing behavior, sounds, and account preferences."
+    },
+    "login": {
+      "title": "Sign In",
+      "description": "Sign in to save your typing progress."
+    },
+    "register": {
+      "title": "Sign Up",
+      "description": "Create a free Tachy account."
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "Your typing progress."
+    }
+  }
+}

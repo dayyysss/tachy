@@ -1,0 +1,5 @@
+[
+  "fn main() { println!(\"Hello, Tachy\"); }",
+  "fn sum(numbers: &[i32]) -> i32 { numbers.iter().sum() }",
+  "use std::collections::HashMap;\n\nfn main() { let mut scores = HashMap::new(); scores.insert(\"Ada\", 10); }"
+]

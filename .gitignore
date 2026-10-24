@@ -1,0 +1,20 @@
+# AI instructions & specifications
+PRD.md
+AGENTS.md
+.agents
+.opencode
+.claude
+.cursor
+
+# Dependencies & outputs
+node_modules
+.nuxt
+.output
+.data
+.env
+.env.*
+!.env.example
+dist
+coverage
+*.log
+.DS_Store

@@ -1,0 +1,5 @@
+[
+  "public class Main { public static void main(String[] args) { System.out.println(\"Hello, Tachy\"); } }",
+  "int sum(int[] numbers) { int total = 0; for (int n : numbers) { total += n; } return total; }",
+  "import java.util.List;\n\nrecord User(String name, int level) {}\n\nList<User> users = List.of(new User(\"Ada\", 12));"
+]

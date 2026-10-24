@@ -1,0 +1,6 @@
+[
+  "interface User { id: string; name: string; level: number } const user: User = { id: '1', name: 'Ada', level: 5 };",
+  "type Result<T> = { ok: true; value: T } | { ok: false; error: string };",
+  "export function clamp(value: number, min: number, max: number): number { return Math.min(max, Math.max(min, value)); }",
+  "const pick = <T, K extends keyof T>(obj: T, key: K): T[K] => obj[key];"
+]

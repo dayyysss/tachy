@@ -1,0 +1,5 @@
+[
+  "<?php function greet($name) { return 'Hello, ' . $name; } echo greet('Tachy'); ?>",
+  "$items = array_map(fn($n) => $n * 2, [1, 2, 3]); echo implode(', ', $items);",
+  "<?php $user = ['name' => 'Ada', 'role' => 'admin']; foreach ($user as $key => $value) { echo \"$key: $value\"; } ?>"
+]

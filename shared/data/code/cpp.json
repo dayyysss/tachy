@@ -1,0 +1,5 @@
+[
+  "#include <iostream>\n\nint main() { std::cout << \"Hello, Tachy\" << std::endl; return 0; }",
+  "int sum(const std::vector<int>& numbers) { int total = 0; for (int n : numbers) total += n; return total; }",
+  "#include <vector>\n#include <algorithm>\n\nauto max_value = *std::max_element(values.begin(), values.end());"
+]

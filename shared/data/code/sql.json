@@ -1,0 +1,6 @@
+[
+  "SELECT username, wpm, accuracy FROM tests WHERE status = 'valid' ORDER BY wpm DESC LIMIT 10;",
+  "SELECT language, COUNT(*) AS total, AVG(wpm) AS avg_wpm FROM tests GROUP BY language ORDER BY total DESC;",
+  "UPDATE user_stats SET total_tests = total_tests + 1, total_words = total_words + 50 WHERE user_id = $1;",
+  "INSERT INTO daily_stats (user_id, local_date, tests_count) VALUES ($1, $2, 1) ON CONFLICT (user_id, local_date) DO UPDATE SET tests_count = daily_stats.tests_count + 1;"
+]

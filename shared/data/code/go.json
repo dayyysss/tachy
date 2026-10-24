@@ -1,0 +1,5 @@
+[
+  "package main\n\nimport \"fmt\"\n\nfunc main() { fmt.Println(\"Hello, Tachy\") }",
+  "func sum(numbers []int) int { total := 0; for _, n := range numbers { total += n }; return total }",
+  "package main\n\nimport \"net/http\"\n\nfunc handler(w http.ResponseWriter, r *http.Request) { w.Write([]byte(\"ok\")) }"
+]

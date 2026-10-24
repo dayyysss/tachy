@@ -1,0 +1,113 @@
+{
+  "nav": {
+    "type": "Mengetik",
+    "leaderboard": "Peringkat",
+    "daily": "Harian",
+    "about": "Tentang",
+    "dashboard": "Dasbor",
+    "settings": "Pengaturan",
+    "signIn": "Masuk",
+    "signUp": "Daftar"
+  },
+  "footer": {
+    "tagline": "Ketik. Ukur. Tingkatkan.",
+    "privacy": "Privasi",
+    "terms": "Ketentuan",
+    "source": "Sumber"
+  },
+  "common": {
+    "loading": "Memuat…",
+    "comingSoon": "Segera hadir",
+    "empty": "Belum ada data."
+  },
+  "home": {
+    "hint": "Klik teks lalu mulai mengetik",
+    "restart": "Tab atau Esc untuk mulai ulang"
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "theme": "Tema",
+    "appearance": "Tampilan",
+    "behavior": "Perilaku",
+    "sound": "Suara",
+    "language": "Bahasa",
+    "account": "Akun",
+    "fontSize": "Ukuran font",
+    "fontFamily": "Font",
+    "textWidth": "Lebar teks",
+    "caretStyle": "Gaya kursor",
+    "smoothCaret": "Kursor halus",
+    "showLiveWpm": "Tampilkan WPM langsung",
+    "showLiveAccuracy": "Tampilkan akurasi langsung",
+    "showTimer": "Tampilkan timer",
+    "focusMode": "Mode fokus",
+    "reduceMotion": "Kurangi gerakan",
+    "quickRestart": "Mulai ulang cepat",
+    "defaultLanguage": "Bahasa default",
+    "soundEnabled": "Suara ketikan",
+    "volume": "Volume",
+    "publicProfile": "Profil publik",
+    "clearHistory": "Hapus riwayat lokal",
+    "reset": "Reset pengaturan"
+  },
+  "auth": {
+    "signIn": "Masuk",
+    "signUp": "Buat akun",
+    "email": "Email",
+    "password": "Kata sandi",
+    "username": "Nama pengguna",
+    "unavailable": "Akun belum dikonfigurasi di deployment ini. Mode tamu tetap bisa dipakai.",
+    "haveAccount": "Sudah punya akun?",
+    "noAccount": "Belum punya akun?"
+  },
+  "leaderboard": {
+    "title": "Peringkat",
+    "empty": "Belum ada hasil peringkat. Jadilah yang pertama."
+  },
+  "dashboard": {
+    "title": "Dasbor",
+    "guestTitle": "Progres lokal",
+    "guestHint": "Masuk untuk sinkron antar perangkat dan ikut papan peringkat.",
+    "today": "Hari ini",
+    "tests": "Tes",
+    "avgWpm": "Rata-rata WPM",
+    "bestWpm": "WPM terbaik",
+    "accuracy": "Akurasi",
+    "heatmap": "Aktivitas",
+    "history": "Tes terbaru"
+  },
+  "seo": {
+    "home": {
+      "title": "Tes Mengetik Gratis dengan Pelacakan Progres",
+      "description": "Tes mengetik gratis dalam bahasa Inggris, Indonesia, kode, dan kutipan. Ukur WPM, akurasi, streak harian, dan papan peringkat yang adil."
+    },
+    "leaderboard": {
+      "title": "Papan Peringkat Mengetik - Harian, Mingguan, Sepanjang Waktu",
+      "description": "Lihat pengetik tercepat berdasarkan bahasa, mode, dan periode."
+    },
+    "daily": {
+      "title": "Tantangan Mengetik Harian",
+      "description": "Teks yang sama untuk semua orang setiap hari. Bandingkan WPM dan akurasimu."
+    },
+    "about": {
+      "title": "Tentang",
+      "description": "Cara Tachy mengukur WPM, akurasi, dan progres, plus statistik komunitas."
+    },
+    "settings": {
+      "title": "Pengaturan",
+      "description": "Atur tema, perilaku mengetik, suara, dan preferensi akun."
+    },
+    "login": {
+      "title": "Masuk",
+      "description": "Masuk untuk menyimpan progres mengetikmu."
+    },
+    "register": {
+      "title": "Daftar",
+      "description": "Buat akun Tachy gratis."
+    },
+    "dashboard": {
+      "title": "Dasbor",
+      "description": "Progres mengetikmu."
+    }
+  }
+}

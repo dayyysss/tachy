@@ -1,0 +1,5 @@
+[
+  ".card { display: grid; gap: 1rem; padding: 1.5rem; border-radius: 12px; background: #22252a; }",
+  "@media (min-width: 768px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }",
+  ":root { --primary: #f4c95d; --surface: #17191c; } .button:hover { color: var(--primary); }"
+]

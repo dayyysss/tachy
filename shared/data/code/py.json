@@ -1,0 +1,6 @@
+[
+  "def greet(name): return f'Hello, {name}!' print(greet('Tachy'))",
+  "numbers = [n for n in range(10) if n % 2 == 0] total = sum(numbers) print(total)",
+  "def load(path): with open(path) as f: return f.read().splitlines()",
+  "class Timer: def __init__(self): self.start = 0 def reset(self): self.start = 0"
+]

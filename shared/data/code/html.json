@@ -1,0 +1,6 @@
+[
+  "button { padding: 0.5rem 1rem; border-radius: 0.25rem; background: var(--color-primary); color: black; }",
+  "<div class=\"flex items-center gap-2\"><span class=\"text-sm\">Ready</span></div>",
+  "input[type='text'] { border: 1px solid #333; outline: none; font-family: monospace; }",
+  "nav a:hover { color: var(--color-primary); text-decoration: underline; }"
+]

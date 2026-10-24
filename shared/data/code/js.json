@@ -1,0 +1,6 @@
+[
+  "const add = (a, b) => a + b; const result = add(2, 3); console.log(result);",
+  "async function load(url) { const res = await fetch(url); return res.json(); }",
+  "const items = [1, 2, 3, 4].map(n => n * 2).filter(n => n > 4);",
+  "export default defineEventHandler(async (event) => { return { ok: true }; });"
+]
