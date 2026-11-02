@@ -19,7 +19,7 @@ export default defineEventHandler(async event => {
     await db.delete(tests).where(eq(tests.id, id))
   } else {
     await db.update(tests).set({
-      status: parsed.data.action === 'approve' ? 'valid' : 'flagged',
+      status: parsed.data.action === 'approve' ? 'valid' : 'unranked',
       reviewedBy: admin.id,
       reviewedAt: new Date(),
       reviewNote: parsed.data.note ?? null,

@@ -7,6 +7,7 @@ const username = String(route.params.username)
 const { data, error } = await useFetch<{
   username: string
   displayName?: string
+  image?: string | null
   level: number
   xp: number
   currentStreak: number
@@ -54,34 +55,56 @@ useSeoMeta({
 <template>
   <div class="mx-auto w-full max-w-4xl px-4 py-12">
     <div v-if="profile" class="space-y-6">
-      <div class="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 class="text-3xl font-semibold">{{ profile.displayName || profile.username }}</h1>
-          <p class="text-sm opacity-50">@{{ profile.username }}</p>
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="size-16 sm:size-20 rounded-2xl bg-gradient-to-br from-primary/25 to-base-300 border border-primary/40 flex items-center justify-center text-primary font-mono font-bold text-2xl sm:text-3xl shadow-inner shrink-0 overflow-hidden">
+            <img v-if="profile.image" :src="profile.image" :alt="profile.displayName || profile.username" class="h-full w-full object-cover">
+            <span v-else>{{ (profile.displayName || profile.username || 'T')[0]?.toUpperCase() }}</span>
+          </div>
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-semibold">{{ profile.displayName || profile.username }}</h1>
+            <p class="text-sm opacity-50 font-mono">@{{ profile.username }}</p>
+          </div>
         </div>
-        <div class="text-right text-xs opacity-60">
+        <div class="text-right text-xs opacity-60 font-mono">
           <p>Current streak: <strong class="text-primary">{{ profile.currentStreak }}d</strong></p>
           <p>Longest streak: {{ profile.longestStreak }}d</p>
         </div>
       </div>
 
       <div class="grid gap-3 sm:grid-cols-4">
-        <div class="rounded-box border border-base-300 p-4">
-          <p class="text-2xl font-semibold">{{ profile.level }}</p>
-          <p class="text-xs uppercase opacity-50">Level ({{ profile.xp }} XP)</p>
-        </div>
-        <div class="rounded-box border border-base-300 p-4">
-          <p class="text-2xl font-semibold">{{ Math.round(profile.bestWpm) }}</p>
-          <p class="text-xs uppercase opacity-50">Best WPM</p>
-        </div>
-        <div class="rounded-box border border-base-300 p-4">
-          <p class="text-2xl font-semibold">{{ profile.totalTests }}</p>
-          <p class="text-xs uppercase opacity-50">Tests</p>
-        </div>
-        <div class="rounded-box border border-base-300 p-4">
-          <p class="text-2xl font-semibold">{{ profile.totalWords.toLocaleString() }}</p>
-          <p class="text-xs uppercase opacity-50">Words Typed</p>
-        </div>
+        <Motion
+          as="div"
+          class="rounded-box border border-base-300/80 bg-base-200/50 p-4 font-mono transition-colors"
+          :while-hover="{ y: -2, transition: { duration: 0.15 } }"
+        >
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40">Level ({{ profile.xp }} XP)</p>
+          <p class="mt-1 text-3xl font-semibold tabular-nums text-primary">{{ profile.level }}</p>
+        </Motion>
+        <Motion
+          as="div"
+          class="rounded-box border border-base-300/80 bg-base-200/50 p-4 font-mono transition-colors"
+          :while-hover="{ y: -2, transition: { duration: 0.15 } }"
+        >
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40">Best WPM</p>
+          <p class="mt-1 text-3xl font-semibold tabular-nums text-primary">{{ Math.round(profile.bestWpm) }}</p>
+        </Motion>
+        <Motion
+          as="div"
+          class="rounded-box border border-base-300/80 bg-base-200/50 p-4 font-mono transition-colors"
+          :while-hover="{ y: -2, transition: { duration: 0.15 } }"
+        >
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40">Tests Completed</p>
+          <p class="mt-1 text-3xl font-semibold tabular-nums text-base-content">{{ profile.totalTests }}</p>
+        </Motion>
+        <Motion
+          as="div"
+          class="rounded-box border border-base-300/80 bg-base-200/50 p-4 font-mono transition-colors"
+          :while-hover="{ y: -2, transition: { duration: 0.15 } }"
+        >
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40">Words Typed</p>
+          <p class="mt-1 text-3xl font-semibold tabular-nums text-base-content">{{ profile.totalWords.toLocaleString() }}</p>
+        </Motion>
       </div>
 
       <div>

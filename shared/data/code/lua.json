@@ -1,0 +1,5 @@
+[
+  "function greet(name) return \"Hello, \" .. name end print(greet(\"Tachy\"))",
+  "local scores = { 75, 88, 94, 110 } for i, v in ipairs(scores) do print(i, v) end",
+  "local player = { name = \"speedy\", level = 5, stats = { wpm = 96 } }"
+]

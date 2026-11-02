@@ -16,40 +16,84 @@ const stats = computed(() => [
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-3xl px-4 py-10">
-    <h1 class="text-3xl font-semibold">About Tachy</h1>
-    <p class="mt-3 text-base-content/70">
-      Tachy is a fast, minimal typing test with progress tracking. Play instantly as a guest, then sign in
-      to keep daily history, streaks, personal bests, and leaderboard ranks across devices.
-    </p>
-
-    <section class="mt-8 grid gap-3 sm:grid-cols-2">
-      <div v-for="item in stats" :key="item.label" class="rounded-box border border-base-300 bg-base-200/40 p-4">
-        <p class="text-2xl font-semibold tabular-nums">{{ item.value }}</p>
-        <p class="text-xs uppercase tracking-wide opacity-50">{{ item.label }}</p>
+  <div class="mx-auto w-full max-w-4xl px-4 py-12 space-y-10">
+    <!-- Hero Header -->
+    <div class="rounded-2xl border border-base-300 bg-base-200/50 p-6 sm:p-10 shadow-xs">
+      <span class="rounded-full bg-primary/10 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-primary">
+        Minimalist Typing Platform
+      </span>
+      <h1 class="mt-3 text-3xl font-bold tracking-tight text-base-content sm:text-4xl">
+        About Tachy
+      </h1>
+      <p class="mt-3 text-sm leading-relaxed text-base-content/70 sm:text-base">
+        Tachy (from the Greek <em>tachys</em>, meaning swift) is an ultra-clean, distraction-free typing platform designed
+        for typists, developers, and writers. No ads, no bloated trackers, and instant practice as a guest or synced account.
+      </p>
+      <div class="mt-6 flex gap-3">
+        <NuxtLink to="/" class="btn btn-primary btn-sm px-5 font-semibold shadow-xs">Start Typing →</NuxtLink>
+        <NuxtLink to="/leaderboard" class="btn btn-ghost btn-sm border border-base-300">View Leaderboards</NuxtLink>
       </div>
-    </section>
+    </div>
 
-    <section class="prose prose-invert mt-10 max-w-none">
-      <h2 class="text-xl font-semibold">How WPM and accuracy are calculated</h2>
-      <ul class="mt-3 list-disc space-y-2 pl-5 text-sm text-base-content/70">
-        <li><strong>WPM</strong> = correct characters ÷ 5 ÷ minutes. A space after a fully correct word counts as one correct character.</li>
-        <li><strong>Raw WPM</strong> = all typed characters ÷ 5 ÷ minutes, including incorrect and extra characters.</li>
-        <li><strong>Accuracy</strong> = correct keypresses ÷ total keypresses. Corrected mistakes still count.</li>
-        <li><strong>Consistency</strong> = 100 × (1 − standard deviation ÷ mean) of per-second raw speed.</li>
-      </ul>
+    <!-- Live Community Numbers -->
+    <div>
+      <h2 class="text-xs font-mono font-semibold uppercase tracking-widest text-base-content/40 mb-3">Live Global Statistics</h2>
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Motion
+          v-for="(item, idx) in stats"
+          :key="item.label"
+          as="div"
+          class="rounded-box border border-base-300/80 bg-base-200/40 p-4 font-mono transition-colors"
+          :initial="{ opacity: 0, y: 8 }"
+          :animate="{ opacity: 1, y: 0 }"
+          :transition="{ duration: 0.2, delay: idx * 0.05 }"
+          :while-hover="{ y: -2, transition: { duration: 0.15 } }"
+        >
+          <p class="text-[11px] uppercase tracking-wider text-base-content/40">{{ item.label }}</p>
+          <p class="mt-1 text-2xl font-bold tabular-nums text-primary">{{ item.value }}</p>
+        </Motion>
+      </div>
+    </div>
 
-      <h2 class="mt-8 text-xl font-semibold">Fair leaderboards</h2>
-      <p class="mt-2 text-sm text-base-content/70">
-        Ranked submissions are replay-verified on the server with the same typing engine used in the browser.
-        Bot-like timing, impossible speed, and metric mismatches are flagged for review instead of published.
-      </p>
+    <!-- Metrics Explanation -->
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div class="rounded-box border border-base-300 bg-base-200/30 p-6 space-y-3">
+        <h3 class="text-base font-semibold text-base-content">Standardized Metric Formulas</h3>
+        <p class="text-xs text-base-content/60">Tachy implements authoritative, standardized typing speed calculation:</p>
+        <ul class="space-y-2 text-xs font-mono text-base-content/75">
+          <li class="rounded bg-base-100 p-2.5 border border-base-300/60">
+            <span class="text-primary font-bold">WPM</span> = (correctCharacters ÷ 5) ÷ minutes
+          </li>
+          <li class="rounded bg-base-100 p-2.5 border border-base-300/60">
+            <span class="text-primary font-bold">Raw WPM</span> = (totalTypedCharacters ÷ 5) ÷ minutes
+          </li>
+          <li class="rounded bg-base-100 p-2.5 border border-base-300/60">
+            <span class="text-primary font-bold">Accuracy</span> = correctKeypresses ÷ totalKeypresses
+          </li>
+          <li class="rounded bg-base-100 p-2.5 border border-base-300/60">
+            <span class="text-primary font-bold">Consistency</span> = 100 × (1 − σ ÷ μ) per second
+          </li>
+        </ul>
+      </div>
 
-      <h2 class="mt-8 text-xl font-semibold">Privacy</h2>
-      <p class="mt-2 text-sm text-base-content/70">
-        Guests keep settings and the last 50 tests locally in the browser. Accounts store an email, username,
-        avatar, and test results. Public profiles are opt-out from settings, and accounts can be deleted.
-      </p>
-    </section>
+      <div class="rounded-box border border-base-300 bg-base-200/30 p-6 space-y-4 flex flex-col justify-between">
+        <div>
+          <h3 class="text-base font-semibold text-base-content">Replay-Verified Fair Play</h3>
+          <p class="mt-2 text-xs leading-relaxed text-base-content/70">
+            Every ranked test submission records full keystroke timestamp telemetry. When submitting to leaderboards,
+            the server re-simulates the exact session with identical deterministic RNG seeds. Bot-like millisecond
+            intervals and impossible speeds are rejected automatically.
+          </p>
+        </div>
+
+        <div class="border-t border-base-300 pt-4">
+          <h4 class="text-xs font-semibold text-base-content">Privacy & Guest Independence</h4>
+          <p class="mt-1 text-xs text-base-content/60">
+            Practice without registration. Your last 50 tests and custom preferences stay safely in your browser.
+            When you register, you can import your offline history in one click.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>

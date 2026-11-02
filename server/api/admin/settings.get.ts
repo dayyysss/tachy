@@ -12,8 +12,8 @@ export default defineEventHandler(async event => {
 
   const rows = await getDb().select().from(siteSettings)
   return adminSettingsSchema.parse({
-    flags: valueOf(rows, 'flags') ?? undefined,
+    flags: (valueOf(rows, 'flags') as object) ?? undefined,
     announcement: valueOf(rows, 'announcement') ?? null,
-    seo: valueOf(rows, 'seo') ?? undefined,
+    seo: (valueOf(rows, 'seo') as object) ?? undefined,
   })
 })

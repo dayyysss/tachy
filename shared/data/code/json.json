@@ -1,0 +1,5 @@
+[
+  "{\n  \"name\": \"tachy\",\n  \"version\": \"1.0.0\",\n  \"mode\": \"time\",\n  \"ranked\": true\n}",
+  "{\n  \"metrics\": { \"wpm\": 105.4, \"raw\": 112.8, \"accuracy\": 98.2, \"consistency\": 89.5 }\n}",
+  "{\n  \"languages\": [\"en\", \"id\", \"es\", \"fr\", \"de\", \"ja-romaji\", \"code\"]\n}"
+]

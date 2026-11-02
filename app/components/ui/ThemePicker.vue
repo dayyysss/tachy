@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { themes } from '#shared/config/themes'
+import { Star, Palette, Shuffle, Search } from 'lucide-vue-next'
 
 const { themeId, setTheme, randomTheme } = useTheme()
 const { settings } = storeToRefs(useSettingsStore())
@@ -22,23 +23,35 @@ const filtered = computed(() => {
 
 <template>
   <div class="dropdown dropdown-end">
-    <button type="button" tabindex="0" class="btn btn-ghost btn-sm gap-2" aria-label="Change theme">
-      <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 3v18M3 12h18" />
-      </svg>
-      <span class="hidden sm:inline">{{ themeId }}</span>
+    <button
+      type="button"
+      tabindex="0"
+      class="btn btn-ghost btn-sm gap-1.5 px-2.5 font-mono text-xs text-base-content/70 hover:text-base-content"
+      aria-label="Change theme"
+    >
+      <Palette class="size-4 text-base-content/60" />
+      <span class="hidden sm:inline font-mono text-xs">{{ themeId }}</span>
     </button>
-    <div tabindex="0" class="dropdown-content z-50 mt-2 w-72 rounded-box border border-base-300 bg-base-200 p-3 shadow-xl">
-      <div class="mb-2 flex gap-1">
-        <input
-          v-model="query"
-          type="search"
-          class="input input-bordered input-sm w-full"
-          placeholder="Search themes"
-          aria-label="Search themes"
+    <div tabindex="0" class="dropdown-content z-50 mt-2 w-72 rounded-2xl border border-base-300 bg-base-200 p-3 shadow-2xl backdrop-blur-md">
+      <div class="mb-2 flex items-center gap-1.5">
+        <div class="relative flex-1">
+          <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-base-content/40" />
+          <input
+            v-model="query"
+            type="search"
+            class="input input-bordered input-sm w-full pl-8 font-mono text-xs"
+            placeholder="Search themes…"
+            aria-label="Search themes"
+          >
+        </div>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm btn-square border border-base-300/80"
+          title="Random theme"
+          @click="randomTheme"
         >
-        <button type="button" class="btn btn-ghost btn-sm" title="Random theme" @click="randomTheme">↻</button>
+          <Shuffle class="size-3.5 text-base-content/70" />
+        </button>
       </div>
       <div class="max-h-72 space-y-1 overflow-y-auto pr-1">
         <button
@@ -59,12 +72,14 @@ const filtered = computed(() => {
           <span v-if="theme.recommended" class="badge badge-primary badge-xs">default</span>
           <span v-else-if="theme.contrastWarning" class="badge badge-warning badge-xs">low contrast</span>
           <span
-            class="cursor-pointer text-sm"
-            :class="{ 'text-primary': settings.themeFavorites?.includes(theme.id) }"
+            class="cursor-pointer transition-colors p-0.5"
+            :class="settings.themeFavorites?.includes(theme.id) ? 'text-primary' : 'text-base-content/30 hover:text-base-content/60'"
             role="button"
             :aria-label="`Favorite ${theme.label}`"
             @click.stop="toggleFavorite(theme.id)"
-          >{{ settings.themeFavorites?.includes(theme.id) ? '★' : '☆' }}</span>
+          >
+            <Star class="size-3.5" :class="settings.themeFavorites?.includes(theme.id) ? 'fill-primary' : ''" />
+          </span>
           <span class="text-xs opacity-50">{{ theme.type }}</span>
         </button>
       </div>

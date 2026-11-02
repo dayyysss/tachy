@@ -1,4 +1,5 @@
 import { eq } from 'drizzle-orm'
+import { tests } from '../../../../db/schema/tests'
 import { userStats, dailyStats, personalBests, userAchievements, userLanguageStats } from '../../../../db/schema/stats'
 import { getDb, hasDatabase } from '../../../../db'
 
@@ -15,6 +16,7 @@ export default defineEventHandler(async event => {
     await tx.delete(personalBests).where(eq(personalBests.userId, id))
     await tx.delete(userAchievements).where(eq(userAchievements.userId, id))
     await tx.delete(userLanguageStats).where(eq(userLanguageStats.userId, id))
+    await tx.update(tests).set({ status: 'unranked' }).where(eq(tests.userId, id))
     await tx.update(userStats).set({
       totalTests: 0,
       totalWords: 0,

@@ -4,7 +4,8 @@ import type { TestResult, Metrics } from '#shared/types/test'
 
 export function useTypingEngine(initialSeed?: string) {
   const store = useTestStore()
-  const settings = useSettingsStore()
+  const settingsStore = useSettingsStore()
+  const { settings } = storeToRefs(settingsStore)
   const sound = useSound()
 
   const session = shallowRef<TypingSession | null>(null)
@@ -26,7 +27,7 @@ export function useTypingEngine(initialSeed?: string) {
   })
   const typedWords = computed(() => {
     version.value
-    return session.value?.typedWords ?? ['']
+    return session.value ? [...session.value.typedWords] : ['']
   })
   const cursorWord = computed(() => {
     version.value
@@ -34,6 +35,7 @@ export function useTypingEngine(initialSeed?: string) {
   })
   const metrics = computed<Metrics>(() => {
     version.value
+    now.value
     if (!session.value || !session.value.started) {
       return {
         wpm: 0, rawWpm: 0, accuracy: 100, consistency: 0,
@@ -98,16 +100,18 @@ export function useTypingEngine(initialSeed?: string) {
   function press(key: string) {
     if (!session.value || store.status === 'finished') return
 
-    const stopOnError = settings.behavior.stopOnError
-    if (stopOnError !== 'off') {
+    const stopOnError = settings.value?.behavior?.stopOnError ?? 'off'
+    if (stopOnError === 'letter') {
       const typed = session.value.typedWords[session.value.cursorWord] ?? ''
       const target = session.value.targetWords[session.value.cursorWord] ?? ''
-      if ((key === ' ' || key === '\n') && stopOnError === 'word' && typed !== target) return
       if (key.length === 1 && key !== ' ' && key !== '\n' && key !== target[typed.length]) return
+    } else if (stopOnError === 'word') {
+      const typed = session.value.typedWords[session.value.cursorWord] ?? ''
+      const target = session.value.targetWords[session.value.cursorWord] ?? ''
+      if ((key === ' ' || key === '\n') && typed !== target) return
     }
 
-
-    if (key === 'Backspace' && settings.behavior.backspaceRule === 'stop_at_word_start') {
+    if (key === 'Backspace' && settings.value?.behavior?.backspaceRule === 'stop_at_word_start') {
       const current = session.value.typedWords[session.value.cursorWord] ?? ''
       if (current.length === 0) return
     }
@@ -123,7 +127,9 @@ export function useTypingEngine(initialSeed?: string) {
     const before = session.value.keystrokes.length
     session.value.press(key, now.value)
     const last = session.value.keystrokes[session.value.keystrokes.length - 1]
-    if (last && session.value.keystrokes.length > before) sound.play(last.correct, settings.sound)
+    if (last && session.value.keystrokes.length > before && settings.value?.sound) {
+      sound.play(last.correct, settings.value.sound)
+    }
     extendZen()
     version.value++
 

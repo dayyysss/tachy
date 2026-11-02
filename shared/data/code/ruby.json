@@ -1,0 +1,5 @@
+[
+  "def greet(name)\n  \"Hello, #{name}!\"\nend\nputs greet(\"Tachy\")",
+  "numbers = (1..20).select(&:even?).map { |n| n * 2 }",
+  "class Typist\n  attr_accessor :name, :wpm\n  def initialize(name, wpm); @name, @wpm = name, wpm; end\nend"
+]

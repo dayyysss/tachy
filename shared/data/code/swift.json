@@ -1,0 +1,5 @@
+[
+  "import Foundation\n\nprint(\"Hello, Tachy!\")",
+  "struct TestResult: Codable { let wpm: Double; let accuracy: Double }",
+  "let words = [\"apple\", \"swift\", \"keyboard\"].map { $0.uppercased() }"
+]

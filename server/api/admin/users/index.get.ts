@@ -34,6 +34,7 @@ export default defineEventHandler(async event => {
     banned: user.banned,
     leaderboardBanned: user.leaderboardBanned,
     twoFactorEnabled: user.twoFactorEnabled,
+    isPublic: user.isPublic,
     createdAt: user.createdAt,
     xp: userStats.xp,
     level: userStats.level,

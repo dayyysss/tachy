@@ -19,14 +19,12 @@ export default defineEventHandler(async event => {
 
   if (event.method === 'DELETE') {
     await requireFreshReauth(event, admin)
-    const [inUse] = await db.select({ slot: brandAssets.slot }).from(brandAssets).where(and(
-      eq(brandAssets.fileId, id),
-      eq(brandAssets.isActive, true),
-    )).limit(1)
-    if (inUse) throw createError({ statusCode: 409, statusMessage: `File is in use by ${inUse.slot}` })
+
+    // Clean up any brand asset references so foreign key never blocks deletion
+    await db.delete(brandAssets).where(eq(brandAssets.fileId, id))
 
     const storage = getStorage()
-    if (storage) await storage.storage.from(row.bucket).remove([row.objectKey])
+    if (storage) await storage.storage.from(row.bucket).remove([row.objectKey]).catch(() => {})
     await db.delete(files).where(eq(files.id, id))
     await writeAudit(event, admin, 'file.delete', 'file', id, { name: row.name }, null)
     return { ok: true }

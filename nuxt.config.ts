@@ -25,6 +25,10 @@ export default defineNuxtConfig({
   components: [{ path: '~/components', pathPrefix: false }],
   pwa: {
     registerType: 'autoUpdate',
+    devOptions: {
+      enabled: true,
+      type: 'module',
+    },
     manifest: {
       name: 'Tachy — Typing Test',
       short_name: 'Tachy',
@@ -41,6 +45,7 @@ export default defineNuxtConfig({
     },
     workbox: {
       navigateFallback: '/',
+      navigateFallbackDenylist: [/^\/api\//, /^\/sw\.js$/, /^\/workbox-.*\.js$/],
       globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}'],
       cleanupOutdatedCaches: true,
     },
@@ -58,7 +63,7 @@ export default defineNuxtConfig({
       siteUrl,
       adminLoginPath,
       adminPanelBase,
-      adminRequire2fa: process.env.ADMIN_REQUIRE_2FA !== 'false',
+      adminRequire2fa: process.env.ADMIN_REQUIRE_2FA === 'true',
     },
   },
   site: {
@@ -77,16 +82,19 @@ export default defineNuxtConfig({
     ],
     detectBrowserLanguage: false,
   },
+  ogImage: {
+    enabled: false,
+  },
   routeRules: {
     '/': { swr: false },
-    '/leaderboard': { swr: 30 },
-    '/about': { swr: 60 },
-    '/daily': { swr: 60 },
+    '/leaderboard': { swr: 30, cache: { varies: ['accept'] } },
+    '/about': { swr: 60, cache: { varies: ['accept'] } },
+    '/daily': { swr: 60, cache: { varies: ['accept'] } },
     '/api/leaderboard/**': { swr: 30 },
     '/api/stats/**': { swr: 60 },
     '/api/sitemap': { swr: 3600 },
-    '/dashboard/**': { ssr: false },
-    '/settings': { ssr: false },
+    '/dashboard/**': { ssr: false, robots: false },
+    '/settings': { ssr: false, robots: false },
     [adminLoginPath]: { ssr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
     [`${adminPanelBase}/**`]: { ssr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
   },
@@ -120,7 +128,7 @@ export default defineNuxtConfig({
         name: 'admin-login',
         path: adminLoginPath,
         file: `${dir}/login.vue`,
-        meta: { layout: 'default' },
+        meta: { layout: 'focus' },
       })
     },
   },
@@ -132,10 +140,13 @@ export default defineNuxtConfig({
     exclude: ['/dashboard/**', '/settings', '/login', '/register', adminLoginPath, `${adminPanelBase}/**`],
   },
   app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
+    layoutTransition: { name: 'layout', mode: 'out-in' },
     head: {
       titleTemplate: '%s · Tachy',
       link: [
-        { rel: 'icon', type: 'image/png', href: '/favicon.ico' },
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/icons/192.png' },
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/icons/180.png' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },

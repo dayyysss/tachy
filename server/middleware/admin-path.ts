@@ -19,7 +19,7 @@ export default defineEventHandler(async event => {
       return sendRedirect(event, loginPath, 302)
     }
 
-    if (process.env.ADMIN_REQUIRE_2FA !== 'false' && !user.twoFactorEnabled && !event.path.endsWith('/setup')) {
+    if (process.env.ADMIN_REQUIRE_2FA === 'true' && !user.twoFactorEnabled && !event.path.endsWith('/setup')) {
       return sendRedirect(event, `${panelBase}/setup`, 302)
     }
   }

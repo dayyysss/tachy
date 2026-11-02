@@ -104,12 +104,33 @@ describe('svg sanitizer', () => {
   })
 })
 
-describe('wordlists', () => {
+describe('wordlists and code languages', () => {
   it('contains 1000 words each for EN and ID', async () => {
     const en = (await import('#shared/data/words/en.json')).default
     const id = (await import('#shared/data/words/id.json')).default
     expect(en.length).toBe(1000)
     expect(id.length).toBe(1000)
+  })
+
+  it('generates text for all 15 natural languages', async () => {
+    const { availableLanguages } = await import('#shared/config/languages')
+    expect(availableLanguages.length).toBe(15)
+
+    for (const lang of availableLanguages) {
+      const result = generateTestText({ ...defaultConfig, language: lang.code, mode: 'words', amount: 5 }, `seed-${lang.code}`)
+      expect(result.words.length).toBe(5)
+    }
+  })
+
+  it('generates code for all 22 programming languages', async () => {
+    const { codeLanguages } = await import('#shared/config/languages')
+    expect(codeLanguages.length).toBe(22)
+
+    for (const code of codeLanguages) {
+      const result = generateTestText({ ...defaultConfig, mode: 'code', contentType: 'code', codeLanguage: code.code }, `seed-${code.code}`)
+      expect(result.words.length).toBeGreaterThan(0)
+      expect(result.source).toBe(code.code)
+    }
   })
 })
 
@@ -119,6 +140,19 @@ describe('theme contrast', () => {
     const theme = getTheme(defaultTheme)
     expect(theme.recommended).toBe(true)
     expect(theme.contrastWarning).toBeUndefined()
+  })
+})
+
+describe('toast composable', () => {
+  it('adds and removes toasts with correct types', async () => {
+    const { useToast } = await import('../app/composables/useToast')
+    const toast = useToast()
+    const id = toast.success('Test success message', 0)
+    expect(toast.toasts.value.some(t => t.id === id && t.type === 'success')).toBe(true)
+    toast.error('Test error message', 0)
+    expect(toast.toasts.value.some(t => t.type === 'error')).toBe(true)
+    toast.remove(id)
+    expect(toast.toasts.value.some(t => t.id === id)).toBe(false)
   })
 })
 

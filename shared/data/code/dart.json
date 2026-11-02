@@ -1,0 +1,5 @@
+[
+  "void main() { print(\"Hello, Tachy!\"); }",
+  "class Player { final String username; final int wpm; Player(this.username, this.wpm); }",
+  "final items = [1, 2, 3, 4, 5].where((e) => e > 2).map((e) => e * 10).toList();"
+]

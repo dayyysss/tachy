@@ -13,10 +13,13 @@ export default defineEventHandler(async event => {
   if (!hasDatabase()) throw createError({ statusCode: 503, statusMessage: 'Persistence is not configured' })
 
   const redis = getRedis()
-  if (!redis) throw createError({ statusCode: 503, statusMessage: 'Redis is not configured' })
+  if (!redis) throw createError({ statusCode: 503, statusMessage: 'Cache service is not configured' })
 
-  const stale = await redis.keys('lb:*')
-  if (stale.length) await redis.del(...stale)
+  const staleLb = await redis.keys('lb:*')
+  if (staleLb.length) await redis.del(...staleLb)
+
+  const staleXp = await redis.keys('xp:*')
+  if (staleXp.length) await redis.del(...staleXp)
 
   const rows = await getDb().select({
     test: tests,

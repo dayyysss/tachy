@@ -2,23 +2,90 @@ import type { TestConfig } from '#shared/config/modes'
 import type { QuoteEntry } from '#shared/types/test'
 import enWords from '#shared/data/words/en.json'
 import idWords from '#shared/data/words/id.json'
+import esWords from '#shared/data/words/es.json'
+import frWords from '#shared/data/words/fr.json'
+import deWords from '#shared/data/words/de.json'
+import ptWords from '#shared/data/words/pt.json'
+import itWords from '#shared/data/words/it.json'
+import trWords from '#shared/data/words/tr.json'
+import msWords from '#shared/data/words/ms.json'
+import jvWords from '#shared/data/words/jv.json'
+import suWords from '#shared/data/words/su.json'
+import jaWords from '#shared/data/words/ja-romaji.json'
+import ruWords from '#shared/data/words/ru.json'
+import koWords from '#shared/data/words/ko-romaja.json'
+import laWords from '#shared/data/words/la.json'
+
 import enQuotes from '#shared/data/quotes/en.json'
 import idQuotes from '#shared/data/quotes/id.json'
+
 import jsCode from '#shared/data/code/js.json'
 import tsCode from '#shared/data/code/ts.json'
 import pyCode from '#shared/data/code/py.json'
-import phpCode from '#shared/data/code/php.json'
+import cCode from '#shared/data/code/c.json'
+import cppCode from '#shared/data/code/cpp.json'
+import csharpCode from '#shared/data/code/csharp.json'
+import javaCode from '#shared/data/code/java.json'
+import kotlinCode from '#shared/data/code/kotlin.json'
+import swiftCode from '#shared/data/code/swift.json'
 import goCode from '#shared/data/code/go.json'
 import rustCode from '#shared/data/code/rust.json'
-import javaCode from '#shared/data/code/java.json'
-import cppCode from '#shared/data/code/cpp.json'
-import cssCode from '#shared/data/code/css.json'
+import phpCode from '#shared/data/code/php.json'
+import rubyCode from '#shared/data/code/ruby.json'
+import dartCode from '#shared/data/code/dart.json'
+import bashCode from '#shared/data/code/bash.json'
+import luaCode from '#shared/data/code/lua.json'
+import rCode from '#shared/data/code/r.json'
 import sqlCode from '#shared/data/code/sql.json'
 import htmlCode from '#shared/data/code/html.json'
+import cssCode from '#shared/data/code/css.json'
+import jsonCode from '#shared/data/code/json.json'
+import yamlCode from '#shared/data/code/yaml.json'
 
-const wordlists: Record<string, string[]> = { en: enWords, id: idWords }
+const wordlists: Record<string, string[]> = {
+  en: enWords,
+  id: idWords,
+  es: esWords,
+  fr: frWords,
+  de: deWords,
+  pt: ptWords,
+  it: itWords,
+  tr: trWords,
+  ms: msWords,
+  jv: jvWords,
+  su: suWords,
+  'ja-romaji': jaWords,
+  ru: ruWords,
+  'ko-romaja': koWords,
+  la: laWords,
+}
+
 const quotes: Record<string, QuoteEntry[]> = { en: enQuotes, id: idQuotes }
-const codeSamples: Record<string, string[]> = { js: jsCode, ts: tsCode, py: pyCode, php: phpCode, go: goCode, rust: rustCode, java: javaCode, cpp: cppCode, sql: sqlCode, html: htmlCode, css: cssCode }
+
+const codeSamples: Record<string, string[]> = {
+  js: jsCode,
+  ts: tsCode,
+  py: pyCode,
+  c: cCode,
+  cpp: cppCode,
+  csharp: csharpCode,
+  java: javaCode,
+  kotlin: kotlinCode,
+  swift: swiftCode,
+  go: goCode,
+  rust: rustCode,
+  php: phpCode,
+  ruby: rubyCode,
+  dart: dartCode,
+  bash: bashCode,
+  lua: luaCode,
+  r: rCode,
+  sql: sqlCode,
+  html: htmlCode,
+  css: cssCode,
+  json: jsonCode,
+  yaml: yamlCode,
+}
 
 export function hashSeed(seed: string): number {
   let hash = 2166136261

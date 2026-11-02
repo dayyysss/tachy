@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "nuxt dev",
+    "dev:node": "node ./node_modules/nuxt/bin/nuxt.mjs dev",
     "build": "nuxt build",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -23,8 +24,10 @@
     "@upstash/redis": "^1.39.0",
     "@vueuse/nuxt": "^15.0.0",
     "better-auth": "^1.7.12",
+    "chart.js": "^4.6.1",
     "daisyui": "^5",
     "drizzle-orm": "^0.45.4",
+    "lucide-vue-next": "^1.0.0",
     "motion-v": "^2.8.0",
     "nuxt": "^4",
     "pinia": "^3",

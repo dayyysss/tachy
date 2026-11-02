@@ -84,7 +84,14 @@ watch([period, board, category, scope], () => { page.value = 1 })
       </select>
     </div>
 
-    <div class="rounded-box border border-base-300">
+    <Motion
+      as="div"
+      :key="`${board}-${period}-${category}-${scope}-${page}`"
+      class="rounded-box border border-base-300"
+      :initial="{ opacity: 0.6, y: 4 }"
+      :animate="{ opacity: 1, y: 0 }"
+      :transition="{ duration: 0.15 }"
+    >
       <table class="table table-sm">
         <thead>
           <tr>
@@ -120,7 +127,7 @@ watch([period, board, category, scope], () => { page.value = 1 })
           </tr>
         </tbody>
       </table>
-    </div>
+    </Motion>
 
     <p v-if="data?.me && !data.rows.some(row => row.userId === data?.me?.userId)" class="mt-3 text-sm">
       Your rank: <strong>#{{ data.me.rank }}</strong> · {{ data.me.username }}

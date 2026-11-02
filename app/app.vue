@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { SeoConfig } from '#shared/schemas/seo'
 
+const { fetchSession } = useAuth()
+await useAsyncData('auth_session', () => fetchSession())
+
 const { data: siteConfig } = await useFetch<{ seo?: SeoConfig }>('/api/site-config')
 
 useHead(() => {
@@ -29,4 +32,6 @@ useHead(() => {
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
+  <ToastContainer />
+  <DialogContainer />
 </template>

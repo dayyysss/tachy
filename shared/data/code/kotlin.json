@@ -1,0 +1,5 @@
+[
+  "fun main() { println(\"Hello, Tachy!\") }",
+  "data class User(val id: String, val username: String, val level: Int = 1)",
+  "val scores = listOf(85, 92, 104, 118).filter { it >= 100 }.map { \"Fast: $it WPM\" }"
+]

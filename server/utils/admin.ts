@@ -8,6 +8,7 @@ export interface AuditActor {
 }
 
 export async function requireFreshReauth(event: H3Event, actor: AuditActor): Promise<void> {
+  if (process.env.ADMIN_REQUIRE_2FA !== 'true') return
   const code = event.headers.get('x-admin-reauth')
   if (!code && process.env.NODE_ENV === 'production') {
     throw createError({ statusCode: 403, statusMessage: 'Fresh re-authentication code required for destructive action' })

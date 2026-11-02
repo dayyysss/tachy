@@ -25,6 +25,7 @@ export default defineEventHandler(async event => {
   return {
     username: profile.username,
     displayName: profile.displayUsername ?? profile.name,
+    image: profile.image,
     level: stats?.level ?? 0,
     xp: stats?.xp ?? 0,
     currentStreak: stats?.currentStreak ?? 0,

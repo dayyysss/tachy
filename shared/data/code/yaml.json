@@ -1,0 +1,5 @@
+[
+  "name: Tachy CI\non: [push, pull_request]\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4",
+  "services:\n  redis:\n    image: redis:7-alpine\n    ports:\n      - \"6379:6379\"",
+  "app:\n  name: tachy\n  theme: dark\n  database:\n    max_connections: 10\n    ssl: true"
+]

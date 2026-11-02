@@ -1,0 +1,5 @@
+[
+  "#!/usr/bin/env bash\n\necho \"Hello, Tachy!\"\nfor i in {1..5}; do echo \"Run: $i\"; done",
+  "if [[ -f \".env\" ]]; then source .env; echo \"Config loaded for $PORT\"; fi",
+  "find . -type f -name \"*.vue\" -exec grep -H \"TypingArea\" {} +"
+]

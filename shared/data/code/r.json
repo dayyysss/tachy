@@ -1,0 +1,5 @@
+[
+  "numbers <- c(45, 60, 75, 90, 110)\ncat(\"Average WPM:\", mean(numbers), \"\\n\")",
+  "df <- data.frame(typist = c(\"A\", \"B\", \"C\"), wpm = c(82, 94, 105))\nsummary(df$wpm)",
+  "plot(x = 1:10, y = (1:10)^2, type = \"l\", col = \"gold\", main = \"Speed Curve\")"
+]

@@ -14,6 +14,8 @@ export function useSeo(key: keyof typeof seoRoutes, overrides: Partial<SeoRoute>
   if (localizedTitle !== titleKey) meta.title = localizedTitle
   if (localizedDescription !== descriptionKey) meta.description = localizedDescription
   const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '')
+  const { brand } = useBrand()
+  const ogImageUrl = computed(() => brand.value?.['og-default']?.url || `${siteUrl}/brand/og-default.png`)
 
   const barePath = route.path.replace(/^\/id(?=\/|$)/, '') || '/'
   const enPath = barePath === '/' ? '/' : barePath
@@ -30,9 +32,9 @@ export function useSeo(key: keyof typeof seoRoutes, overrides: Partial<SeoRoute>
     ogUrl: canonical,
     ogLocale: route.path.startsWith('/id') ? 'id_ID' : 'en_US',
     ogLocaleAlternate: route.path.startsWith('/id') ? 'en_US' : 'id_ID',
-    ogImage: `${siteUrl}/brand/og-default.png`,
+    ogImage: () => ogImageUrl.value,
     twitterCard: 'summary_large_image',
-    twitterImage: `${siteUrl}/brand/og-default.png`,
+    twitterImage: () => ogImageUrl.value,
   })
 
   useHead({

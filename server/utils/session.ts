@@ -6,6 +6,7 @@ export interface SessionUser {
   email: string
   name: string
   username?: string | null
+  image?: string | null
   role?: string | null
   isPublic?: boolean
   timezone?: string

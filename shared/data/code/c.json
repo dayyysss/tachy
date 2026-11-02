@@ -1,0 +1,5 @@
+[
+  "#include <stdio.h>\n\nint main(void) { printf(\"Hello, Tachy!\\n\"); return 0; }",
+  "int sum(int arr[], int n) { int s = 0; for(int i = 0; i < n; i++) s += arr[i]; return s; }",
+  "#include <stdlib.h>\n\nchar* buf = (char*)malloc(sizeof(char) * 128); free(buf);"
+]

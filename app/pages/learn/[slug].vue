@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { guideMap, guides } from '#shared/data/guides'
+import { BookOpen } from 'lucide-vue-next'
 
 const route = useRoute()
 const slug = String(route.params.slug)
@@ -10,7 +11,7 @@ if (!guide) {
 }
 
 useSeoMeta({
-  title: `${guide.title}`,
+  title: `${guide.title} — Tachy Guide`,
   description: guide.description,
   ogTitle: `${guide.title}`,
   ogDescription: guide.description,
@@ -22,35 +23,63 @@ const related = computed(() => guides.filter(item => item.slug !== guide.slug).s
 </script>
 
 <template>
-  <article class="mx-auto w-full max-w-2xl px-4 py-12">
-    <nav class="mb-4 text-xs opacity-50">
+  <article class="mx-auto w-full max-w-3xl px-4 py-12 space-y-10">
+    <!-- Breadcrumb -->
+    <nav class="text-xs font-mono opacity-50 flex items-center gap-1.5">
       <NuxtLink to="/learn" class="hover:text-primary">Guides</NuxtLink>
-      <span> / {{ guide.title }}</span>
+      <span>/</span>
+      <span class="text-base-content">{{ guide.title }}</span>
     </nav>
-    <h1 class="text-3xl font-semibold">{{ guide.title }}</h1>
-    <p class="mt-2 text-base-content/60">{{ guide.description }}</p>
-    <p class="mt-2 text-xs opacity-40">{{ guide.minutes }} min read</p>
 
-    <section v-for="section in guide.sections" :key="section.heading" class="mt-8">
-      <h2 class="text-xl font-semibold">{{ section.heading }}</h2>
-      <p v-for="paragraph in section.paragraphs" :key="paragraph" class="mt-3 text-sm leading-6 text-base-content/75">
-        {{ paragraph }}
-      </p>
-    </section>
+    <!-- Article Header -->
+    <header class="border-b border-base-300 pb-8">
+      <div class="inline-flex items-center gap-1.5 text-xs font-mono text-primary">
+        <BookOpen class="size-3.5" />
+        <span>{{ guide.minutes }} minute read</span>
+      </div>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-base-content sm:text-4xl">{{ guide.title }}</h1>
+      <p class="mt-3 text-base text-base-content/70 leading-relaxed">{{ guide.description }}</p>
+    </header>
 
-    <div class="mt-10 rounded-box border border-primary/30 bg-primary/5 p-5">
-      <p class="text-sm">Put it into practice with a free 60-second test.</p>
-      <NuxtLink to="/" class="btn btn-primary btn-sm mt-3">Start typing</NuxtLink>
+    <!-- Article Content -->
+    <div class="space-y-8">
+      <section v-for="section in guide.sections" :key="section.heading" class="space-y-3">
+        <h2 class="text-xl font-bold text-base-content tracking-tight">{{ section.heading }}</h2>
+        <p
+          v-for="(paragraph, pIndex) in section.paragraphs"
+          :key="pIndex"
+          class="text-sm leading-relaxed text-base-content/80"
+        >
+          {{ paragraph }}
+        </p>
+      </section>
     </div>
 
-    <section class="mt-10">
-      <h2 class="text-sm font-medium uppercase tracking-wide opacity-50">Related guides</h2>
-      <ul class="mt-3 space-y-2 text-sm">
-        <li v-for="item in related" :key="item.slug">
-          <NuxtLink :to="`/learn/${item.slug}`" class="link link-hover">{{ item.title }}</NuxtLink>
-        </li>
-      </ul>
+    <!-- Practice Callout -->
+    <div class="rounded-2xl border border-primary/30 bg-primary/5 p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <h3 class="font-bold text-base text-base-content">Test Your Technique Now</h3>
+        <p class="mt-0.5 text-xs text-base-content/60">Launch a quick 60-second test to apply what you just learned.</p>
+      </div>
+      <NuxtLink to="/" class="btn btn-primary btn-sm px-5 font-semibold shrink-0 shadow-xs">
+        Start Free Test →
+      </NuxtLink>
+    </div>
+
+    <!-- Related Articles -->
+    <section v-if="related.length" class="border-t border-base-300 pt-8 space-y-4">
+      <h2 class="text-xs font-mono font-semibold uppercase tracking-widest text-base-content/40">Related Articles</h2>
+      <div class="grid gap-3 sm:grid-cols-3">
+        <NuxtLink
+          v-for="item in related"
+          :key="item.slug"
+          :to="`/learn/${item.slug}`"
+          class="rounded-box border border-base-300 bg-base-200/30 p-4 transition-all hover:border-primary"
+        >
+          <p class="text-xs font-semibold text-base-content line-clamp-2">{{ item.title }}</p>
+          <p class="mt-2 text-[10px] font-mono opacity-50">{{ item.minutes }} min read</p>
+        </NuxtLink>
+      </div>
     </section>
   </article>
 </template>
-

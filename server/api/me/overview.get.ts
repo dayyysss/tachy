@@ -1,12 +1,13 @@
-import { and, eq, gte } from 'drizzle-orm'
-import { dailyStats, userStats } from '../../db/schema/stats'
+import { and, desc, eq, gte } from 'drizzle-orm'
+import { dailyStats, userAchievements, userStats } from '../../db/schema/stats'
+import { tests } from '../../db/schema/tests'
 import { getDb, hasDatabase } from '../../db'
 import { localDate } from '#shared/utils/dates'
 
 export default defineEventHandler(async event => {
   const user = await requireUser(event)
   if (!hasDatabase()) {
-    return { today: null, progress: null, totals: null, week: null }
+    return { today: null, progress: null, totals: null, week: null, achievements: [] }
   }
 
   const db = getDb()
@@ -25,6 +26,19 @@ export default defineEventHandler(async event => {
     eq(dailyStats.userId, user.id),
     gte(dailyStats.localDate, localDate(from, user.timezone || 'UTC')),
   ))
+
+  const userTests = await db.select({
+    wpm: tests.wpm,
+    consistency: tests.consistency,
+    accuracy: tests.accuracy,
+  }).from(tests).where(eq(tests.userId, user.id)).limit(100)
+
+  const topWpm = userTests.length ? Math.max(...userTests.map(t => Number(t.wpm))) : 0
+  const avgConsistency = userTests.length
+    ? userTests.reduce((sum, t) => sum + Number(t.consistency), 0) / userTests.length
+    : 0
+
+  const unlockedAchievements = await db.select().from(userAchievements).where(eq(userAchievements.userId, user.id))
 
   const previous = recent.filter(row => row.localDate !== today)
   const prevTests = previous.reduce((sum, row) => sum + row.testsCount, 0)
@@ -49,18 +63,25 @@ export default defineEventHandler(async event => {
       label: delta > 2 ? 'improving' : delta < -2 ? 'declining' : 'stable',
       baselineWpm: prevWpm,
     },
-    totals: totals ? {
-      tests: totals.totalTests,
-      words: totals.totalWords,
-      timeMs: totals.totalTimeMs,
-      xp: totals.xp,
-      level: totals.level,
-      streak: totals.currentStreak,
-      longestStreak: totals.longestStreak,
-    } : null,
+    totals: {
+      tests: totals?.totalTests ?? 0,
+      words: totals?.totalWords ?? 0,
+      chars: totals?.totalChars ?? 0,
+      timeMs: totals?.totalTimeMs ?? 0,
+      xp: totals?.xp ?? 0,
+      level: totals?.level ?? 0,
+      streak: totals?.currentStreak ?? 0,
+      longestStreak: totals?.longestStreak ?? 0,
+      topWpm: Math.round(topWpm),
+      avgConsistency: Math.round(avgConsistency),
+    },
     week: {
       tests: recent.reduce((sum, row) => sum + row.testsCount, 0),
       words: recent.reduce((sum, row) => sum + row.wordsTyped, 0),
     },
+    achievements: unlockedAchievements.map(a => ({
+      id: a.achievementId,
+      unlockedAt: a.unlockedAt,
+    })),
   }
 })

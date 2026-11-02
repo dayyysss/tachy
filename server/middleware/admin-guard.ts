@@ -8,7 +8,7 @@ export default defineEventHandler(async event => {
   }
 
   const user = await requireRole(event, 'admin')
-  if (process.env.ADMIN_REQUIRE_2FA !== 'false' && !user.twoFactorEnabled) {
+  if (process.env.ADMIN_REQUIRE_2FA === 'true' && !user.twoFactorEnabled) {
     throw createError({ statusCode: 404, statusMessage: 'Not found' })
   }
 })

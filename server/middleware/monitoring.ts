@@ -25,15 +25,19 @@ export default defineEventHandler(event => {
       ...(status >= 500 ? { e5xx: 1 } : status >= 400 ? { e4xx: 1 } : {}),
     }
 
-    Promise.all([
-      redis.hincrby(`mon:h:${hour}`, fields.requests!, 1).then(() => redis.expire(`mon:h:${hour}`, 172800)),
-      redis.hincrby(`mon:d:${day}`, fields.requests!, 1).then(() => redis.expire(`mon:d:${day}`, 3024000)),
-    ]).catch(() => {})
+    const pipeline = [
+      redis.hincrby(`mon:h:${hour}`, 'requests', 1),
+      redis.expire(`mon:h:${hour}`, 172800),
+      redis.hincrby(`mon:d:${day}`, 'requests', 1),
+      redis.expire(`mon:d:${day}`, 3024000),
+    ]
 
     for (const [field, value] of Object.entries(fields)) {
       if (field === 'requests') continue
-      redis.hincrby(`mon:h:${hour}`, field, value).catch(() => {})
-      redis.hincrby(`mon:d:${day}`, field, value).catch(() => {})
+      pipeline.push(redis.hincrby(`mon:h:${hour}`, field, value))
+      pipeline.push(redis.hincrby(`mon:d:${day}`, field, value))
     }
+
+    Promise.all(pipeline).catch(() => {})
   })
 })

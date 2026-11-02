@@ -29,7 +29,7 @@ export const folders = pgTable('folders', {
 export const brandAssets = pgTable('brand_assets', {
   slot: text('slot').notNull(),
   version: integer('version').notNull(),
-  fileId: uuid('file_id').notNull().references(() => files.id),
+  fileId: uuid('file_id').notNull().references(() => files.id, { onDelete: 'cascade' }),
   isActive: boolean('is_active').notNull().default(false),
   createdBy: text('created_by').references(() => user.id),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
