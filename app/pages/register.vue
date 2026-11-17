@@ -9,6 +9,7 @@ const showPassword = ref(false)
 const pending = ref(false)
 const error = ref('')
 const router = useRouter()
+const route = useRoute()
 const toast = useToast()
 const { fetchSession, user } = useAuth()
 
@@ -17,7 +18,8 @@ onMounted(() => {
     const config = useRuntimeConfig()
     navigateTo(`${config.public.adminPanelBase || '/tachos'}/dashboard`)
   } else if (user.value) {
-    navigateTo('/dashboard')
+    const target = route.query.redirect ? String(route.query.redirect) : '/dashboard'
+    navigateTo(target)
   }
 })
 
@@ -37,8 +39,10 @@ async function submit() {
     })
     await fetchSession()
     toast.success('Account created successfully! Welcome to Tachy.')
+    await syncPendingTestResult()
     await importGuestHistory()
-    await navigateTo('/dashboard')
+    const target = route.query.redirect ? String(route.query.redirect) : '/dashboard'
+    await navigateTo(target)
   } catch (cause: unknown) {
     const status = (cause as { statusCode?: number }).statusCode
     error.value = status === 503
@@ -53,9 +57,10 @@ async function signInWith(provider: 'google' | 'github') {
   pending.value = true
   error.value = ''
   try {
+    const callbackURL = route.query.redirect ? String(route.query.redirect) : '/dashboard'
     const res = await $fetch<{ url?: string; redirect?: boolean }>('/api/auth/sign-in/social', {
       method: 'POST',
-      body: { provider, callbackURL: '/dashboard' },
+      body: { provider, callbackURL },
     })
     if (res?.url) {
       window.location.href = res.url
@@ -198,7 +203,7 @@ async function signInWith(provider: 'google' | 'github') {
 
       <div class="pt-2 text-center text-xs text-base-content/60">
         <span>{{ $t('auth.haveAccount') }}</span>
-        <NuxtLink :to="localePath('/login')" class="font-medium text-primary hover:underline ml-1">
+        <NuxtLink :to="route.query.redirect ? `${localePath('/login')}?redirect=${encodeURIComponent(String(route.query.redirect))}` : localePath('/login')" class="font-medium text-primary hover:underline ml-1">
           {{ $t('auth.signIn') }}
         </NuxtLink>
       </div>

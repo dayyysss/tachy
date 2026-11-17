@@ -44,6 +44,7 @@ export default defineEventHandler(async event => {
     setHeader(event, 'content-type', row.mime)
     setHeader(event, 'cache-control', 'public, max-age=31536000, immutable')
     setHeader(event, 'x-content-type-options', 'nosniff')
+    setHeader(event, 'access-control-allow-origin', '*')
     if (row.checksum) {
       setHeader(event, 'etag', `"${row.checksum}"`)
     }
@@ -58,6 +59,7 @@ export default defineEventHandler(async event => {
       setHeader(event, 'content-type', row.mime)
       setHeader(event, 'cache-control', 'public, max-age=31536000, immutable')
       setHeader(event, 'x-content-type-options', 'nosniff')
+      setHeader(event, 'access-control-allow-origin', '*')
       return buffer
     }
   }

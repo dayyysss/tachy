@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { userCreateSchema, userPatchSchema } from '#shared/schemas/admin'
+import { userCreateSchema, userPatchSchema, adminSettingsSchema } from '#shared/schemas/admin'
+import { seoSchema } from '#shared/schemas/seo'
 import { hasPermission } from '#shared/config/roles'
 
 describe('Admin User Schemas', () => {
@@ -60,5 +61,24 @@ describe('Admin User Schemas', () => {
     expect(hasPermission('moderator', 'users:read')).toBe(true)
     expect(hasPermission('user', 'users:read')).toBe(false)
     expect(hasPermission('user', 'self:write')).toBe(true)
+  })
+
+  it('validates seo schema with dynamic website domain / siteUrl', () => {
+    const parsed = seoSchema.parse({
+      siteName: 'Tachy Speed',
+      siteUrl: 'https://speedtyping.app',
+    })
+    expect(parsed.siteUrl).toBe('https://speedtyping.app')
+    expect(parsed.siteName).toBe('Tachy Speed')
+
+    // Default siteUrl is empty string
+    const defaulted = seoSchema.parse({})
+    expect(defaulted.siteUrl).toBe('')
+
+    // Nested inside adminSettingsSchema
+    const adminParsed = adminSettingsSchema.parse({
+      seo: { siteUrl: 'https://custom.tachy.dev' },
+    })
+    expect(adminParsed.seo.siteUrl).toBe('https://custom.tachy.dev')
   })
 })

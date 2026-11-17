@@ -163,7 +163,21 @@ export function useTypingEngine(initialSeed?: string) {
   async function saveResult(result: TestResult) {
     try {
       const auth = await $fetch<{ user?: { id: string } } | null>('/api/auth/get-session')
-      if (!auth?.user) return
+      if (!auth?.user) {
+        if (typeof window !== 'undefined') {
+          try {
+            window.localStorage.setItem('tachy-pending-submission', JSON.stringify({
+              result,
+              savedAt: Date.now(),
+            }))
+          } catch {}
+        }
+        return
+      }
+
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem('tachy-pending-submission')
+      }
       const start = await $fetch<{ testId: string; seed: string; token: string }>('/api/tests/start', {
         method: 'POST',
         body: { config: result.config, seed: result.seed },

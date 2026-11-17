@@ -2,6 +2,7 @@
 
 export const seoSchema = z.object({
   siteName: z.string().min(1).max(60).default('Tachy'),
+  siteUrl: z.string().max(200).default(''),
   tagline: z.string().max(120).default('Type. Measure. Improve.'),
   titleTemplate: z.string().max(80).default('%s · Tachy'),
   defaultDescription: z.string().max(200).default('Free typing test with progress tracking.'),

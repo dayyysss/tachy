@@ -23,6 +23,7 @@ export default defineEventHandler(async event => {
   setHeader(event, 'content-type', brand.mime)
   setHeader(event, 'cache-control', 'public, max-age=31536000, immutable')
   setHeader(event, 'x-content-type-options', 'nosniff')
+  setHeader(event, 'access-control-allow-origin', '*')
   setHeader(event, 'etag', `"brand-${slot}-v${brand.version}"`)
   return brand.buffer
 })

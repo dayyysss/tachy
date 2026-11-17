@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { SeoConfig } from '#shared/schemas/seo'
 
-const { fetchSession } = useAuth()
+const { fetchSession, user } = useAuth()
 await useAsyncData('auth_session', () => fetchSession())
 
 const { data: siteConfig } = await useFetch<{ seo?: SeoConfig }>('/api/site-config')
 const { brand } = useBrand()
 const config = useRuntimeConfig()
-const siteUrl = computed(() => ((config.public.siteUrl as string) || '').replace(/\/$/, ''))
+const siteUrl = computed(() => (siteConfig.value?.seo?.siteUrl?.trim() || (config.public.siteUrl as string) || '').replace(/\/$/, ''))
 
 useHead(() => {
   const seo = siteConfig.value?.seo
@@ -48,6 +48,12 @@ useHead(() => {
       { rel: 'apple-touch-icon', href: logoMarkUrl },
       { rel: 'shortcut icon', href: faviconUrl },
     ],
+  }
+})
+
+onMounted(async () => {
+  if (user.value) {
+    await syncPendingTestResult()
   }
 })
 </script>

@@ -35,6 +35,7 @@ export default defineEventHandler(async event => {
   setHeader(event, 'content-type', 'image/png')
   setHeader(event, 'cache-control', 'public, max-age=86400, immutable')
   setHeader(event, 'x-content-type-options', 'nosniff')
+  setHeader(event, 'access-control-allow-origin', '*')
   setHeader(event, 'etag', `"favicon-${size}-v${version}"`)
   return png
 })

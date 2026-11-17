@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { Share2, Check } from 'lucide-vue-next'
 import type { TestResult } from '#shared/types/test'
+import ShareModal from './ShareModal.vue'
 
 const props = defineProps<{
   result: TestResult
@@ -8,6 +10,8 @@ const props = defineProps<{
   serverMeta?: { xpGained: number; level: number; levelUp: boolean; newAchievements: string[]; ranks?: { daily: number | null; weekly: number | null } } | null
 }>()
 const emit = defineEmits<{ next: []; repeat: []; restart: [] }>()
+
+const { user } = useAuth()
 
 const configLabel = computed(() => {
   const { config } = props.result
@@ -20,6 +24,7 @@ const configLabel = computed(() => {
 const langLabel = computed(() => props.result.config.language.toUpperCase())
 
 const published = ref(false)
+const showShareModal = ref(false)
 const confetti = ref<{ left: number; delay: number; duration: number; rotate: number; tone: string }[]>([])
 const nextBtn = ref<HTMLButtonElement | null>(null)
 
@@ -56,13 +61,14 @@ async function publish() {
   await navigator.clipboard?.writeText(url).catch(() => {})
 }
 
-function share() {
-  const text = `${Math.round(props.result.wpm)} WPM · ${Math.round(props.result.accuracy)}% accuracy on Tachy`
-  if (import.meta.client && navigator.share) {
-    navigator.share({ title: 'Tachy result', text }).catch(() => {})
-    return
+async function share() {
+  if (props.serverId && !published.value) {
+    try {
+      await $fetch(`/api/me/share/${props.serverId}`, { method: 'POST', body: { isPublic: true } })
+      published.value = true
+    } catch {}
   }
-  if (import.meta.client) navigator.clipboard?.writeText(text).catch(() => {})
+  showShareModal.value = true
 }
 </script>
 
@@ -202,12 +208,39 @@ function share() {
         <button ref="nextBtn" type="button" class="btn btn-primary btn-sm px-4 font-semibold text-primary-content shadow-xs" @click="emit('next')">Next test</button>
         <button type="button" class="btn btn-ghost btn-sm text-base-content/70 hover:text-base-content" @click="emit('repeat')">Repeat text</button>
         <button type="button" class="btn btn-ghost btn-sm text-base-content/70 hover:text-base-content" @click="emit('restart')">Restart</button>
-        <button type="button" class="btn btn-ghost btn-sm text-base-content/70 hover:text-base-content" @click="share">Share</button>
+        <button type="button" class="btn btn-ghost btn-sm text-base-content/70 hover:text-base-content gap-1.5" @click="share">
+          <Share2 class="size-3.5" />
+          <span>Share Score</span>
+        </button>
         <button v-if="serverId" type="button" class="btn btn-ghost btn-sm text-base-content/70 hover:text-base-content" :disabled="published" @click="publish">{{ published ? 'Published' : 'Publish result' }}</button>
         <NuxtLink v-if="serverId" :to="`/replay/${serverId}`" class="btn btn-ghost btn-sm text-base-content/70 hover:text-base-content">Replay</NuxtLink>
-        <NuxtLink to="/login" class="btn btn-ghost btn-sm text-primary hover:bg-primary/10 ml-auto">Sign in to save →</NuxtLink>
+        <NuxtLink
+          v-if="!user"
+          to="/login?redirect=/?savePending=1"
+          class="btn btn-ghost btn-sm text-primary hover:bg-primary/10 ml-auto font-mono text-xs gap-1"
+          title="Sign in or register to record this score and XP to your account"
+        >
+          <span>Sign in to save</span>
+          <span>→</span>
+        </NuxtLink>
+        <span
+          v-else-if="serverId"
+          class="inline-flex items-center gap-1.5 text-xs font-mono text-success/80 ml-auto px-2 py-1"
+        >
+          <Check class="size-3.5" />
+          <span>Saved to profile</span>
+        </span>
       </div>
     </Motion>
+
+    <!-- Custom Visual Stats Share Modal -->
+    <ShareModal
+      v-model="showShareModal"
+      :result="result"
+      :is-p-b="isPB"
+      :server-id="serverId"
+      :server-meta="serverMeta"
+    />
   </div>
 </template>
 

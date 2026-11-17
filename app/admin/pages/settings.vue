@@ -20,6 +20,7 @@ interface AdminSettings {
   announcement: { enabled: boolean; text: string; type: 'info' | 'warning'; expiresAt: string | null } | null
   seo: {
     siteName: string
+    siteUrl: string
     tagline: string
     titleTemplate: string
     defaultDescription: string
@@ -39,6 +40,7 @@ const form = reactive<AdminSettings>({
   announcement: null,
   seo: {
     siteName: 'Tachy',
+    siteUrl: '',
     tagline: 'Type. Measure. Improve.',
     titleTemplate: '%s · Tachy',
     defaultDescription: '',
@@ -342,6 +344,19 @@ async function save() {
               placeholder="Tachy"
             >
             <p class="text-[10px] text-base-content/40 font-mono">Brand name shown across navigation and meta tags</p>
+          </div>
+
+          <!-- Website Domain / Base URL -->
+          <div class="space-y-1.5">
+            <label for="seo-siteurl" class="text-xs font-bold text-base-content/80">Website Domain / Canonical URL</label>
+            <input
+              id="seo-siteurl"
+              v-model="form.seo.siteUrl"
+              type="text"
+              class="input input-bordered input-sm w-full text-xs font-mono bg-base-100"
+              placeholder="https://tachy.app"
+            >
+            <p class="text-[10px] text-base-content/40 font-mono">Base domain for watermark, canonical links, and social shares (e.g. <code class="text-primary">https://tachy.app</code>)</p>
           </div>
 
           <!-- Tagline -->
