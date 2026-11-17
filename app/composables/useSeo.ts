@@ -15,7 +15,10 @@ export function useSeo(key: keyof typeof seoRoutes, overrides: Partial<SeoRoute>
   if (localizedDescription !== descriptionKey) meta.description = localizedDescription
   const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '')
   const { brand } = useBrand()
-  const ogImageUrl = computed(() => brand.value?.['og-default']?.url || `${siteUrl}/brand/og-default.png`)
+  const ogImageUrl = computed(() => {
+    const raw = brand.value?.['og-default']?.url || brand.value?.['logo-on-dark']?.url || brand.value?.['logo-on-light']?.url || '/brand/og-default'
+    return raw.startsWith('http') ? raw : `${siteUrl}${raw}`
+  })
 
   const barePath = route.path.replace(/^\/id(?=\/|$)/, '') || '/'
   const enPath = barePath === '/' ? '/' : barePath

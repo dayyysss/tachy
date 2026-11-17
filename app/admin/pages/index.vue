@@ -197,22 +197,16 @@ const statusDistribution = computed(() => {
 <template>
   <div class="space-y-6">
     <!-- Welcome Header / Hero -->
-    <div class="flex flex-wrap items-center justify-between gap-4 rounded-box border border-base-300 bg-base-200/50 p-6 shadow-xs">
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="size-2 rounded-full bg-success animate-pulse" />
-          <span class="text-xs font-mono uppercase tracking-widest text-base-content/50">Control Center</span>
-        </div>
-        <h1 class="mt-1 text-2xl font-bold tracking-tight">Overview & Analytics</h1>
-        <p class="mt-1 text-xs text-base-content/60">
-          Real-time metrics, system operations, and audit trail for Tachy platform.
-        </p>
-      </div>
-
-      <div class="flex items-center gap-2">
+    <!-- Standard Header -->
+    <AdminPageHeader
+      title="Overview & Platform Telemetry"
+      subtitle="Real-time typing activity metrics, anti-cheat detection ratio, infrastructure operations, and system vitals."
+      category="CONTROL CENTER"
+    >
+      <template #actions>
         <button
           type="button"
-          class="btn btn-sm btn-ghost gap-1.5 border border-base-300"
+          class="btn btn-sm btn-ghost gap-1.5 border border-base-300 font-sans"
           :disabled="pending"
           @click="refresh()"
         >
@@ -222,7 +216,7 @@ const statusDistribution = computed(() => {
           <span class="text-xs">Refresh</span>
         </button>
 
-        <NuxtLink :to="`${panelBase}/moderation`" class="btn btn-sm btn-primary gap-1.5">
+        <NuxtLink :to="`${panelBase}/moderation`" class="btn btn-sm btn-primary gap-1.5 font-sans font-semibold">
           <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           </svg>
@@ -231,8 +225,8 @@ const statusDistribution = computed(() => {
             {{ data?.flagged }}
           </span>
         </NuxtLink>
-      </div>
-    </div>
+      </template>
+    </AdminPageHeader>
 
     <p v-if="error" class="alert alert-warning text-sm">
       Admin data is currently unavailable. Ensure database is running and credentials in `.env` are valid.

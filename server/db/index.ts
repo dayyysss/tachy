@@ -12,9 +12,9 @@ export function hasDatabase(): boolean {
 export function getDb() {
   if (!hasDatabase()) throw new Error('DATABASE_URL is not configured')
   if (!database) {
+    // ponytail: native postgres driver via postgres-js; standard connection without cloud pooler restriction
     client = postgres(process.env.DATABASE_URL!, {
-      prepare: false,
-      max: 5,
+      max: 10,
       idle_timeout: 20,
       connect_timeout: 10,
       onnotice: () => {},

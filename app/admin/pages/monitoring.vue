@@ -55,42 +55,36 @@ function reload() {
 </script>
 
 <template>
-    <div class="space-y-6">
-        <!-- Header -->
-        <div
-            class="flex flex-wrap items-center justify-between gap-4 rounded-box border border-base-300 bg-base-200/50 p-5 shadow-xs"
+    <div class="space-y-6 font-sans">
+        <!-- Standard Header -->
+        <AdminPageHeader
+            title="System Health & Telemetry"
+            subtitle="Database connectivity, cache latency, storage health, uptime, and real-time operational response times."
+            category="SYSTEM OPERATIONS"
         >
-            <div>
-                <h1 class="text-xl font-bold tracking-tight">
-                    System Health & Monitoring
-                </h1>
-                <p class="mt-0.5 text-xs text-base-content/60">
-                    Database response times, cache latency, service availability,
-                    and traffic metrics.
-                </p>
-            </div>
-
-            <button
-                type="button"
-                class="btn btn-sm btn-ghost gap-1.5 border border-base-300"
-                :disabled="pending"
-                @click="reload"
-            >
-                <svg
-                    class="size-3.5"
-                    :class="{ 'animate-spin': pending }"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
+            <template #actions>
+                <button
+                    type="button"
+                    class="btn btn-sm btn-ghost gap-1.5 border border-base-300 font-sans"
+                    :disabled="pending"
+                    @click="reload"
                 >
-                    <path
-                        d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"
-                    />
-                </svg>
-                <span class="text-xs">Re-check</span>
-            </button>
-        </div>
+                    <svg
+                        class="size-3.5"
+                        :class="{ 'animate-spin': pending }"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"
+                        />
+                    </svg>
+                    <span class="text-xs">Refresh Health</span>
+                </button>
+            </template>
+        </AdminPageHeader>
 
         <p v-if="error" class="alert alert-warning text-sm">
             Health data unavailable (database/auth not configured).

@@ -7,7 +7,7 @@ export default defineEventHandler(async () => {
   const result: Record<string, { url: string | null; version: number; width: number | null; height: number | null }> = {}
 
   for (const slot of brandSlots) {
-    result[slot.id] = { url: bundledBrand[slot.id] ?? null, version: 1, width: null, height: null }
+    result[slot.id] = { url: null, version: 1, width: null, height: null }
   }
 
   if (!hasDatabase()) return result

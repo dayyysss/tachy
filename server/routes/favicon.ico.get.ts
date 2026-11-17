@@ -1,37 +1,17 @@
-import fs from 'node:fs'
-import path from 'node:path'
 import sharp from 'sharp'
+import { getBrandBuffer, fallbackIconSvg } from '../utils/brand'
 
 export default defineEventHandler(async event => {
-  const source = await activeBrandFile('favicon')
-  const storage = getStorage()
+  const brand = await getBrandBuffer('favicon')
 
-  let buffer: Buffer | null = null
+  let buffer: Buffer
+  let version = 1
 
-  if (source && storage) {
-    const { data, error } = await storage.storage.from(source.bucket).download(source.objectKey)
-    if (!error && data) {
-      buffer = Buffer.from(await data.arrayBuffer())
-    }
-  }
-
-  if (!buffer) {
-    const fallbackIco = path.resolve(process.cwd(), 'public/favicon.ico')
-    if (fs.existsSync(fallbackIco)) {
-      setHeader(event, 'content-type', 'image/x-icon')
-      setHeader(event, 'cache-control', 'public, max-age=86400')
-      setHeader(event, 'x-content-type-options', 'nosniff')
-      return fs.readFileSync(fallbackIco)
-    }
-
-    const fallbackPng = path.resolve(process.cwd(), 'public/favicon.png')
-    if (fs.existsSync(fallbackPng)) {
-      buffer = fs.readFileSync(fallbackPng)
-    }
-  }
-
-  if (!buffer) {
-    throw createError({ statusCode: 404, statusMessage: 'Not found' })
+  if (brand) {
+    buffer = brand.buffer
+    version = brand.version
+  } else {
+    buffer = await sharp(Buffer.from(fallbackIconSvg)).png().toBuffer()
   }
 
   const png32 = await sharp(buffer)
@@ -59,8 +39,6 @@ export default defineEventHandler(async event => {
   setHeader(event, 'content-type', 'image/x-icon')
   setHeader(event, 'cache-control', 'public, max-age=86400, immutable')
   setHeader(event, 'x-content-type-options', 'nosniff')
-  if (source) {
-    setHeader(event, 'etag', `"favicon-ico-v${source.version}"`)
-  }
+  setHeader(event, 'etag', `"favicon-ico-v${version}"`)
   return ico
 })

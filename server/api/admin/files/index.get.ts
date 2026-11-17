@@ -17,7 +17,19 @@ export default defineEventHandler(async event => {
 
   const db = getDb()
   const [rows, folderRows] = await Promise.all([
-    db.select().from(files).where(and(...filters)).orderBy(asc(files.name)).limit(200),
+    db.select({
+      id: files.id,
+      bucket: files.bucket,
+      objectKey: files.objectKey,
+      folder: files.folder,
+      name: files.name,
+      mime: files.mime,
+      sizeBytes: files.sizeBytes,
+      width: files.width,
+      height: files.height,
+      checksum: files.checksum,
+      createdAt: files.createdAt,
+    }).from(files).where(and(...filters)).orderBy(asc(files.name)).limit(200),
     db.select().from(folders).orderBy(asc(folders.path)).limit(500),
   ])
 

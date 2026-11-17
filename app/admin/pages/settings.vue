@@ -102,31 +102,25 @@ async function save() {
 
 <template>
   <div class="space-y-6 font-sans">
-    <!-- Header Banner -->
-    <div class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-base-300 bg-base-200/50 p-5 shadow-xs">
-      <div>
-        <div class="flex items-center gap-2">
-          <Sliders class="size-4 text-primary" />
-          <h1 class="text-xl font-bold tracking-tight">Global Site Configuration</h1>
-        </div>
-        <p class="mt-1 text-xs text-base-content/60">
-          Control platform feature switches, visitor announcements, and SEO metadata discovery.
-        </p>
-      </div>
-
-      <div class="flex items-center gap-2">
+    <!-- Standard Header -->
+    <AdminPageHeader
+      title="Global Site Configuration"
+      subtitle="Control platform operational switches, visitor announcements, and search engine SEO metadata discovery."
+      category="PLATFORM CONFIGURATION"
+    >
+      <template #actions>
         <button
           type="submit"
           form="settings-form"
-          class="btn btn-primary btn-sm gap-1.5 shadow-xs font-mono text-xs"
+          class="btn btn-primary btn-sm gap-1.5 shadow-xs font-semibold"
           :disabled="saving"
         >
           <span v-if="saving" class="loading loading-spinner loading-xs" />
-          <Save v-else class="size-3.5" />
+          <Save v-else class="size-4" />
           <span>{{ saving ? 'Saving…' : 'Save Changes' }}</span>
         </button>
-      </div>
-    </div>
+      </template>
+    </AdminPageHeader>
 
     <p v-if="error" class="alert alert-warning text-xs font-mono">
       Settings unavailable (database connection or authentication error).

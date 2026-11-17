@@ -12,6 +12,7 @@ export const files = pgTable('files', {
   width: integer('width'),
   height: integer('height'),
   checksum: text('checksum'),
+  dataUrl: text('data_url'),
   uploadedBy: text('uploaded_by').references(() => user.id),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   deletedAt: timestamp('deleted_at', { withTimezone: true }),

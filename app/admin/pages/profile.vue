@@ -68,27 +68,23 @@ async function signOut() {
 
 <template>
   <div class="space-y-6 font-sans">
-    <!-- Header Banner -->
-    <div class="flex flex-wrap items-center justify-between gap-4 rounded-box border border-base-300 bg-base-200/50 p-5 shadow-xs">
-      <div>
-        <div class="flex items-center gap-2">
-          <User class="size-4 text-primary" />
-          <h1 class="text-xl font-bold tracking-tight">Admin Profile & Security</h1>
-        </div>
-        <p class="mt-1 text-xs text-base-content/60">
-          Manage your console credentials, active session tokens, and multi-factor authentication.
-        </p>
-      </div>
-
-      <button
-        type="button"
-        class="btn btn-error btn-outline btn-sm gap-1.5 font-mono text-xs"
-        @click="signOut"
-      >
-        <LogOut class="size-3.5" />
-        <span>Sign Out</span>
-      </button>
-    </div>
+    <!-- Standard Header -->
+    <AdminPageHeader
+      title="Admin Profile & Security"
+      subtitle="Manage administrator console credentials, active session tokens, and multi-factor authentication."
+      category="SECURITY PROFILE"
+    >
+      <template #actions>
+        <button
+          type="button"
+          class="btn btn-error btn-outline btn-sm gap-1.5 font-semibold text-xs"
+          @click="signOut"
+        >
+          <LogOut class="size-3.5" />
+          <span>Sign Out</span>
+        </button>
+      </template>
+    </AdminPageHeader>
 
     <div class="grid gap-6 md:grid-cols-2">
       <!-- Account Info Card -->

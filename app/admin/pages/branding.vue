@@ -78,16 +78,23 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
-  <div class="space-y-6">
-    <!-- Header -->
-    <div class="flex flex-wrap items-center justify-between gap-4 rounded-box border border-base-300 bg-base-200/50 p-5 shadow-xs">
-      <div>
-        <h1 class="text-xl font-bold tracking-tight">Brand & Asset Slots</h1>
-        <p class="mt-0.5 text-xs text-base-content/60">
-          Theme-aware logo rendering, favicon sources, and Open Graph card configurations with instant rollback.
-        </p>
-      </div>
-    </div>
+  <div class="space-y-6 font-sans">
+    <!-- Standard Header -->
+    <AdminPageHeader
+      title="Brand & Asset Slots"
+      subtitle="Theme-aware dynamic logo rendering, favicon sources, and Open Graph card configurations with instant live updates."
+      category="BRANDING & DESIGN"
+    >
+      <template #actions>
+        <button
+          type="button"
+          class="btn btn-sm btn-ghost border border-base-300 gap-1.5"
+          @click="refresh"
+        >
+          <span class="text-xs">Refresh Slots</span>
+        </button>
+      </template>
+    </AdminPageHeader>
 
     <!-- Slots Grid -->
     <div class="grid gap-4 lg:grid-cols-2">
@@ -182,7 +189,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
           class="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-3 sm:p-6 backdrop-blur-sm"
           @click.self="closeModal"
         >
-          <div class="modal-box flex max-h-[90vh] w-full max-w-4xl flex-col rounded-2xl border border-base-300 bg-base-100 p-0 shadow-2xl overflow-hidden font-sans">
+          <div class="relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col rounded-2xl border border-base-300 bg-base-100 p-0 shadow-2xl overflow-hidden font-sans">
             <!-- Modal Header -->
             <div class="flex items-center justify-between border-b border-base-300 bg-base-200/50 px-5 py-3.5">
               <div class="flex items-center gap-2.5">
@@ -214,12 +221,20 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 
             <!-- Modal Body (FileManager in Select Mode) -->
             <div class="flex-1 overflow-y-auto p-5 bg-base-100">
-              <FileManager mode="select" @select="useFile" />
+              <Suspense>
+                <FileManager mode="select" @select="useFile" />
+                <template #fallback>
+                  <div class="py-16 text-center text-xs font-mono opacity-50">
+                    <span class="loading loading-spinner loading-md text-primary mb-2 block mx-auto" />
+                    Loading file manager…
+                  </div>
+                </template>
+              </Suspense>
             </div>
 
             <!-- Modal Footer -->
             <div class="flex items-center justify-between border-t border-base-300 bg-base-200/40 px-5 py-3 text-xs font-mono text-base-content/50">
-              <span>Click "Use" on any image file to publish immediately to this brand slot.</span>
+              <span>Click "Select for Brand Slot" on any image to publish immediately.</span>
               <button type="button" class="btn btn-ghost btn-xs" @click="closeModal">Cancel</button>
             </div>
           </div>
@@ -230,13 +245,13 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 </template>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
+.modal-fade-enter-active,
+.modal-fade-leave-active {
   transition: opacity 150ms ease, transform 150ms ease;
 }
 
-.fade-enter-from,
-.fade-leave-to {
+.modal-fade-enter-from,
+.modal-fade-leave-to {
   opacity: 0;
   transform: scale(0.98);
 }

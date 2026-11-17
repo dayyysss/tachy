@@ -11,11 +11,11 @@ export function useBrand() {
   const { data: brand, refresh } = useFetch<Record<string, BrandAssetData>>('/api/brand', {
     key: 'site-brand-assets',
     default: () => ({
-      'logo-on-light': { url: bundledBrand['logo-on-light'] ?? null, version: 1, width: null, height: null },
-      'logo-on-dark': { url: bundledBrand['logo-on-dark'] ?? null, version: 1, width: null, height: null },
+      'logo-on-light': { url: null, version: 1, width: null, height: null },
+      'logo-on-dark': { url: null, version: 1, width: null, height: null },
       'logo-mark': { url: null, version: 1, width: null, height: null },
-      'favicon': { url: bundledBrand['favicon'] ?? null, version: 1, width: null, height: null },
-      'og-default': { url: bundledBrand['og-default'] ?? null, version: 1, width: null, height: null },
+      'favicon': { url: '/favicon.ico', version: 1, width: null, height: null },
+      'og-default': { url: null, version: 1, width: null, height: null },
     }),
   })
 

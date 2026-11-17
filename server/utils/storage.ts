@@ -9,7 +9,9 @@ function getActiveKey(): string {
 }
 
 export function storageConfigured(): boolean {
-  return Boolean(process.env.SUPABASE_URL && getActiveKey())
+  const isExplicitlyEnabled = process.env.STORAGE_PROVIDER === 'supabase' || process.env.USE_SUPABASE_STORAGE === 'true'
+  const url = (process.env.SUPABASE_URL ?? '').trim()
+  return Boolean(isExplicitlyEnabled && url && getActiveKey())
 }
 
 export function getStorage(): SupabaseClient | null {
@@ -23,8 +25,10 @@ export function getStorage(): SupabaseClient | null {
 }
 
 export function publicFileUrl(bucket: string, objectKey: string): string | null {
+  if (!objectKey) return null
   const supabase = getStorage()
-  if (!supabase) return null
-  if (bucket === 'private') return null
-  return supabase.storage.from(bucket).getPublicUrl(objectKey).data.publicUrl
+  if (supabase && bucket !== 'private') {
+    return supabase.storage.from(bucket).getPublicUrl(objectKey).data.publicUrl
+  }
+  return `/api/files/${encodeURIComponent(objectKey)}`
 }

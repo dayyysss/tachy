@@ -2,6 +2,8 @@ import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { files, brandAssets } from '../../../db/schema/settings'
 import { getDb, hasDatabase } from '../../../db'
+import { getStorage } from '../../../utils/storage'
+import { writeAudit } from '../../../utils/admin'
 
 const patchSchema = z.object({
   name: z.string().min(1).max(255).optional(),

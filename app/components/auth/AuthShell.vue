@@ -156,12 +156,9 @@ defineProps<{
 
         <!-- Header Icon Badge & Typing Motifs -->
         <div class="text-center">
-          <div class="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/30 shadow-inner text-primary">
-            <!-- Typist Keyboard Icon -->
-            <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="4" width="20" height="16" rx="3" />
-              <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M7 16h10" />
-            </svg>
+          <div class="mx-auto mb-3 flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/30 shadow-inner p-2">
+            <!-- Tachy Brand Logo Mark -->
+            <BrandLogo mark :to="null" imgClass="size-9 object-contain" />
           </div>
 
           <h1 class="text-2xl font-bold tracking-tight text-base-content sm:text-3xl">

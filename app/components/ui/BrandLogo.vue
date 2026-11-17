@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { bundledBrand } from '#shared/config/brand'
-
 const props = withDefaults(defineProps<{
-  to?: string
+  to?: string | null
   mark?: boolean
   imgClass?: string
   variant?: 'auto' | 'light' | 'dark'
@@ -18,24 +16,29 @@ const lightLogo = computed(() => {
   if (props.mark) {
     return brand.value?.['logo-mark']?.url
       || brand.value?.['favicon']?.url
-      || bundledBrand['favicon']
-      || bundledBrand['logo-on-light']
+      || null
   }
   return brand.value?.['logo-on-light']?.url
     || brand.value?.['logo-on-dark']?.url
-    || bundledBrand['logo-on-light']
+    || brand.value?.['logo-mark']?.url
+    || null
 })
 
 const darkLogo = computed(() => {
   if (props.mark) {
     return brand.value?.['logo-mark']?.url
       || brand.value?.['favicon']?.url
-      || bundledBrand['favicon']
-      || bundledBrand['logo-on-dark']
+      || null
   }
   return brand.value?.['logo-on-dark']?.url
     || brand.value?.['logo-on-light']?.url
-    || bundledBrand['logo-on-dark']
+    || brand.value?.['logo-mark']?.url
+    || null
+})
+
+const defaultSizeClass = computed(() => {
+  if (props.mark) return 'size-9 sm:size-10'
+  return 'h-9 sm:h-10 w-auto'
 })
 </script>
 
@@ -46,43 +49,59 @@ const darkLogo = computed(() => {
     :while-hover="{ scale: 1.03 }"
     :while-press="{ scale: 0.97 }"
   >
-    <NuxtLink :to="to" class="inline-flex items-center gap-2" aria-label="Tachy home">
+    <component
+      :is="to ? 'NuxtLink' : 'div'"
+      :to="to || undefined"
+      class="inline-flex items-center gap-2"
+      aria-label="Tachy home"
+    >
       <img
-        v-if="variant === 'light'"
+        v-if="variant === 'light' && lightLogo"
         :src="lightLogo"
         alt="Tachy"
-        class="object-contain"
-        :class="[mark ? 'size-7' : 'h-7 w-auto', imgClass]"
-        :width="mark ? 28 : 120"
-        height="28"
+        class="object-contain transition-all"
+        :class="[imgClass || defaultSizeClass]"
+        :width="mark ? 40 : 160"
+        height="40"
       >
       <img
-        v-else-if="variant === 'dark'"
+        v-else-if="variant === 'dark' && darkLogo"
         :src="darkLogo"
         alt="Tachy"
-        class="object-contain"
-        :class="[mark ? 'size-7' : 'h-7 w-auto', imgClass]"
-        :width="mark ? 28 : 120"
-        height="28"
+        class="object-contain transition-all"
+        :class="[imgClass || defaultSizeClass]"
+        :width="mark ? 40 : 160"
+        height="40"
       >
-      <template v-else>
+      <template v-else-if="lightLogo || darkLogo">
         <img
+          v-if="lightLogo"
           :src="lightLogo"
           alt="Tachy"
-          class="brand-logo--light object-contain"
-          :class="[mark ? 'size-7' : 'h-7 w-auto', imgClass]"
-          :width="mark ? 28 : 120"
-          height="28"
+          class="brand-logo--light object-contain transition-all"
+          :class="[imgClass || defaultSizeClass]"
+          :width="mark ? 40 : 160"
+          height="40"
         >
         <img
+          v-if="darkLogo"
           :src="darkLogo"
           alt="Tachy"
-          class="brand-logo--dark object-contain"
-          :class="[mark ? 'size-7' : 'h-7 w-auto', imgClass]"
-          :width="mark ? 28 : 120"
-          height="28"
+          class="brand-logo--dark object-contain transition-all"
+          :class="[imgClass || defaultSizeClass]"
+          :width="mark ? 40 : 160"
+          height="40"
         >
       </template>
-    </NuxtLink>
+      <!-- Pure CSS/SVG Dynamic Mark Fallback -->
+      <div
+        v-else
+        class="inline-flex items-center gap-2 font-mono font-bold text-primary"
+        :class="[imgClass || defaultSizeClass]"
+      >
+        <span class="rounded-xl bg-primary/20 px-2 py-1 text-primary border border-primary/30">T</span>
+        <span v-if="!mark" class="text-base-content font-sans text-lg font-bold tracking-tight">Tachy</span>
+      </div>
+    </component>
   </Motion>
 </template>

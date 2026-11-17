@@ -7,7 +7,7 @@ export default defineEventHandler(async event => {
   const panelBase = `/${panelSegment}`
 
   if (path === loginPath || path.startsWith(`${loginPath}/`) || path === panelBase || path.startsWith(`${panelBase}/`) || path.startsWith('/api/admin') || path === '/api/health') return
-  if (path.startsWith('/_nuxt') || path.startsWith('/__sitemap__') || path.startsWith('/icons') || path === '/favicon.ico') return
+  if (path.startsWith('/_nuxt') || path.startsWith('/__sitemap__') || path.startsWith('/icons') || path.startsWith('/brand') || path.startsWith('/api/files') || path.startsWith('/favicon')) return
   if (/\.(?:png|jpg|jpeg|webp|avif|svg|ico|css|js|woff2?|map)$/i.test(path)) return
 
   const flags = await getSiteFlags()

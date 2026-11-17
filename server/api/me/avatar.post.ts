@@ -9,7 +9,6 @@ export default defineEventHandler(async event => {
   if (!hasDatabase()) throw createError({ statusCode: 503, statusMessage: 'Database not available' })
 
   const storage = getStorage()
-  if (!storage) throw createError({ statusCode: 503, statusMessage: 'Storage service is not configured' })
 
   const form = await readMultipartFormData(event)
   const file = form?.find(item => item.name === 'avatar' || item.name === 'file')
@@ -34,16 +33,37 @@ export default defineEventHandler(async event => {
     throw createError({ statusCode: 415, statusMessage: 'Invalid image format. Please upload PNG, JPG, or WebP.' })
   }
 
-  const objectKey = `avatars/${current.id}-${Date.now()}.webp`
-  const { error: uploadErr } = await storage.storage
-    .from('public')
-    .upload(objectKey, processed, {
-      contentType: 'image/webp',
-      upsert: true,
-    })
+  const objectKey = `avatars-${current.id}-${Date.now()}.webp`
+  const db = getDb()
 
-  if (uploadErr) {
-    throw createError({ statusCode: 502, statusMessage: uploadErr.message || 'Failed to save avatar image' })
+  if (storage) {
+    const { error: uploadErr } = await storage.storage
+      .from('public')
+      .upload(objectKey, processed, {
+        contentType: 'image/webp',
+        upsert: true,
+      })
+    if (uploadErr) {
+      throw createError({ statusCode: 502, statusMessage: uploadErr.message || 'Failed to save avatar image' })
+    }
+  } else {
+    // Database fallback
+    const { randomUUID, createHash } = await import('node:crypto')
+    const { files } = await import('../../db/schema/settings')
+    await db.insert(files).values({
+      id: randomUUID(),
+      bucket: 'public',
+      objectKey,
+      folder: '/avatars',
+      name: `${current.username || 'user'}-avatar.webp`,
+      mime: 'image/webp',
+      sizeBytes: processed.length,
+      width: 256,
+      height: 256,
+      checksum: createHash('sha256').update(processed).digest('hex'),
+      dataUrl: `data:image/webp;base64,${processed.toString('base64')}`,
+      uploadedBy: current.id,
+    }).onConflictDoNothing()
   }
 
   const imageUrl = publicFileUrl('public', objectKey)
@@ -51,7 +71,7 @@ export default defineEventHandler(async event => {
     throw createError({ statusCode: 500, statusMessage: 'Could not resolve public avatar URL' })
   }
 
-  await getDb().update(user).set({
+  await db.update(user).set({
     image: imageUrl,
     updatedAt: new Date(),
   }).where(eq(user.id, current.id))

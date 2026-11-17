@@ -17,8 +17,8 @@ export const brandSlots: BrandSlot[] = [
 ]
 
 export const bundledBrand: Record<string, string> = {
-  'logo-on-light': '/brand/logo-on-light.png',
-  'logo-on-dark': '/brand/logo-on-dark.png',
-  'favicon': '/favicon.png',
-  'og-default': '/brand/og-default.png',
+  'logo-on-light': '',
+  'logo-on-dark': '',
+  'favicon': '/favicon.ico',
+  'og-default': '',
 }

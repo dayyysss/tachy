@@ -1,41 +1,26 @@
-import fs from 'node:fs'
-import path from 'node:path'
 import sharp from 'sharp'
-
-const sizes = new Set([16, 32, 48, 180, 192, 512])
+import { getBrandBuffer, fallbackIconSvg } from '../../utils/brand'
 
 export default defineEventHandler(async event => {
-  const size = Number(getRouterParam(event, 'size'))
-  if (!sizes.has(size)) throw createError({ statusCode: 404, statusMessage: 'Not found' })
+  const rawParam = String(getRouterParam(event, 'size') ?? '')
+  const digits = rawParam.replace(/\D/g, '')
+  const size = digits ? Number(digits) : (rawParam.includes('apple') ? 180 : 192)
 
-  const source = await activeBrandFile('favicon')
-  const storage = getStorage()
-
-  let buffer: Buffer | null = null
-
-  if (source && storage) {
-    const { data, error } = await storage.storage.from(source.bucket).download(source.objectKey)
-    if (!error && data) {
-      buffer = Buffer.from(await data.arrayBuffer())
-    }
+  if (size < 16 || size > 1024) {
+    throw createError({ statusCode: 404, statusMessage: 'Invalid icon size' })
   }
 
-  if (!buffer) {
-    const iconFile = path.resolve(process.cwd(), `public/icons/${size}.png`)
-    if (fs.existsSync(iconFile)) {
-      setHeader(event, 'content-type', 'image/png')
-      setHeader(event, 'cache-control', 'public, max-age=86400, immutable')
-      setHeader(event, 'x-content-type-options', 'nosniff')
-      return fs.readFileSync(iconFile)
-    }
+  const brand = await getBrandBuffer('favicon')
 
-    const fallbackPng = path.resolve(process.cwd(), 'public/favicon.png')
-    if (fs.existsSync(fallbackPng)) {
-      buffer = fs.readFileSync(fallbackPng)
-    }
+  let buffer: Buffer
+  let version = 1
+
+  if (brand) {
+    buffer = brand.buffer
+    version = brand.version
+  } else {
+    buffer = await sharp(Buffer.from(fallbackIconSvg)).png().toBuffer()
   }
-
-  if (!buffer) throw createError({ statusCode: 404, statusMessage: 'Not found' })
 
   const pad = Math.max(1, Math.round(size * 0.04))
   const inner = size - pad * 2
@@ -50,8 +35,6 @@ export default defineEventHandler(async event => {
   setHeader(event, 'content-type', 'image/png')
   setHeader(event, 'cache-control', 'public, max-age=86400, immutable')
   setHeader(event, 'x-content-type-options', 'nosniff')
-  if (source) {
-    setHeader(event, 'etag', `"favicon-${size}-v${source.version}"`)
-  }
+  setHeader(event, 'etag', `"favicon-${size}-v${version}"`)
   return png
 })

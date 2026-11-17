@@ -13,6 +13,19 @@ export default defineEventHandler(async event => {
 
   const db = getDb()
 
+  if (event.method === 'PATCH') {
+    const body = await readBody(event)
+    const oldPath = String(body?.oldPath ?? '').replace(/\/+$/, '') || '/'
+    const newPath = String(body?.newPath ?? '').replace(/\/+$/, '') || '/'
+    if (oldPath === '/' || newPath === '/') throw createError({ statusCode: 400, statusMessage: 'Cannot rename root' })
+    if (oldPath === newPath) return { ok: true, path: newPath }
+
+    await db.update(folders).set({ path: newPath }).where(eq(folders.path, oldPath))
+    await db.update(files).set({ folder: newPath }).where(eq(files.folder, oldPath))
+    await writeAudit(event, admin, 'folder.rename', 'folder', newPath, { oldPath }, { newPath })
+    return { ok: true, path: newPath }
+  }
+
   if (event.method === 'DELETE') {
     if (path === '/') throw createError({ statusCode: 400, statusMessage: 'Cannot delete root' })
     const [used] = await db.select({ id: files.id }).from(files).where(and(eq(files.folder, path), isNull(files.deletedAt))).limit(1)
