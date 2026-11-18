@@ -33,7 +33,16 @@ export function getAuth() {
     database: drizzleAdapter(getDb(), { provider: 'pg', schema }),
     secret: process.env.BETTER_AUTH_SECRET,
     baseURL: process.env.BETTER_AUTH_URL || process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-    trustedOrigins: [process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'],
+    trustedOrigins: Array.from(new Set([
+      'http://localhost:3000',
+      'http://localhost:*',
+      'https://tachy.web.id',
+      'https://*.tachy.web.id',
+      'https://tachy.vercel.app',
+      'https://*.vercel.app',
+      process.env.NUXT_PUBLIC_SITE_URL,
+      process.env.BETTER_AUTH_URL,
+    ].filter(Boolean) as string[])),
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
