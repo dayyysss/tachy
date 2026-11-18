@@ -4,9 +4,23 @@ import type { SeoConfig } from '#shared/schemas/seo'
 const { fetchSession, user } = useAuth()
 await useAsyncData('auth_session', () => fetchSession())
 
-const { data: siteConfig } = await useFetch<{ seo?: SeoConfig }>('/api/site-config')
+const { data: siteConfig } = await useFetch<{ flags?: { maintenance?: boolean }; seo?: SeoConfig }>('/api/site-config')
 const { brand } = useBrand()
 const config = useRuntimeConfig()
+const route = useRoute()
+
+const loginSegment = ((config.public.adminLoginPath as string) || 'tachyPanel').replace(/^\/+|\/+$/g, '')
+const panelSegment = ((config.public.adminPanelBase as string) || 'tachos').replace(/^\/+|\/+$/g, '')
+const isExcludedRoute = route.path === `/${loginSegment}`
+  || route.path.startsWith(`/${loginSegment}/`)
+  || route.path === `/${panelSegment}`
+  || route.path.startsWith(`/${panelSegment}/`)
+
+if (siteConfig.value?.flags?.maintenance && !isExcludedRoute) {
+  if (route.query.bypass !== '1' || user.value?.role !== 'admin') {
+    showError({ statusCode: 503, statusMessage: 'Tachy is under maintenance' })
+  }
+}
 const siteUrl = computed(() => (siteConfig.value?.seo?.siteUrl?.trim() || (config.public.siteUrl as string) || '').replace(/\/$/, ''))
 
 useHead(() => {

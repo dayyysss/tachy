@@ -39,7 +39,10 @@ export default defineEventHandler(async event => {
       if (user?.role === 'admin') return
     }
 
-    throw createError({ statusCode: 503, statusMessage: 'Tachy is under maintenance' })
+    // Only block API endpoints at the Nitro level so HTML page requests reach Nuxt's error.vue
+    if (path.startsWith('/api/')) {
+      throw createError({ statusCode: 503, statusMessage: 'Tachy is under maintenance' })
+    }
   }
 
   if (!flags.signups && path.startsWith('/api/auth/sign-up')) {
