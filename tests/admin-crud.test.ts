@@ -114,4 +114,10 @@ describe('Admin User Schemas', () => {
     expect(adminParsed.social.discord).toBe('https://discord.gg/custom')
     expect(adminParsed.social.github).toBe('https://github.com/dayyysss/tachy')
   })
+
+  it('validates maintenance mode default flag is false', () => {
+    const defaulted = adminSettingsSchema.parse({})
+    expect(defaulted.flags.maintenance).toBe(false)
+    expect(defaulted.flags.signups).toBe(true)
+  })
 })
