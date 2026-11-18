@@ -15,8 +15,8 @@ export default defineEventHandler(async event => {
   // Health check endpoint
   if (path === '/api/health') return
 
-  // Site config endpoint
-  if (path === '/api/site-config') return
+  // Public metadata endpoints
+  if (path === '/api/site-config' || path === '/api/brand') return
 
   // Admin routes and administrative API endpoints
   if (path === loginPath || path.startsWith(`${loginPath}/`) || path === panelBase || path.startsWith(`${panelBase}/`) || path.startsWith('/api/admin')) return

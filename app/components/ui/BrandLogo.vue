@@ -11,8 +11,17 @@ const props = withDefaults(defineProps<{
 })
 
 const { brand } = useBrand()
-const localePath = useLocalePath()
-const route = useRoute()
+let localePath = (p: string) => p
+try {
+  const lp = useLocalePath()
+  if (typeof lp === 'function') localePath = lp
+} catch {}
+
+let route = { path: '/' }
+try {
+  const r = useRoute()
+  if (r) route = r
+} catch {}
 
 const targetPath = computed(() => {
   if (props.to === null) return null
@@ -33,24 +42,24 @@ const lightLogo = computed(() => {
   if (props.mark) {
     return brand.value?.['logo-mark']?.url
       || brand.value?.['favicon']?.url
-      || null
+      || '/brand/logo-mark.png'
   }
   return brand.value?.['logo-on-light']?.url
     || brand.value?.['logo-on-dark']?.url
     || brand.value?.['logo-mark']?.url
-    || null
+    || '/brand/logo-on-light.png'
 })
 
 const darkLogo = computed(() => {
   if (props.mark) {
     return brand.value?.['logo-mark']?.url
       || brand.value?.['favicon']?.url
-      || null
+      || '/brand/logo-mark.png'
   }
   return brand.value?.['logo-on-dark']?.url
     || brand.value?.['logo-on-light']?.url
     || brand.value?.['logo-mark']?.url
-    || null
+    || '/brand/logo-on-dark.png'
 })
 
 const defaultSizeClass = computed(() => {

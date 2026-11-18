@@ -317,6 +317,13 @@ body {
 }
 
 /* Theme-aware Brand Logo Switching without Flash */
+.brand-logo--dark {
+  display: none;
+}
+.brand-logo--light {
+  display: inline-block;
+}
+
 /* On dark theme (tachy, etc): show the bright/yellow logo, hide dark logo */
 html[data-theme-type="dark"] .brand-logo--dark {
   display: none !important;

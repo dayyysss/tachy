@@ -145,10 +145,14 @@ onUnmounted(() => {
 
     <!-- Top Minimal Navigation Bar -->
     <header class="relative z-20 mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-8">
-      <div class="inline-flex items-center gap-2.5 font-mono font-bold text-primary select-none">
-        <span class="rounded-xl bg-primary/20 px-2.5 py-1 text-primary border border-primary/30 text-sm">T</span>
-        <span class="text-base-content font-sans text-lg font-bold tracking-tight">Tachy</span>
-      </div>
+      <NuxtLink
+        to="/"
+        class="inline-flex items-center gap-2 focus:outline-hidden"
+        aria-label="Tachy home"
+        @click.prevent="handleClear"
+      >
+        <BrandLogo :to="null" />
+      </NuxtLink>
       <div class="flex items-center gap-2">
         <a
           href="https://discord.gg"
