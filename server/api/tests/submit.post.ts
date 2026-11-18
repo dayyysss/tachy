@@ -132,11 +132,22 @@ export default defineEventHandler(async event => {
             updatedAt: new Date(),
           },
         })
-
         const [current] = await tx.select().from(userStats).where(eq(userStats.userId, user.id)).limit(1)
         const nextXp = (current?.xp ?? 0) + xp
         level = levelFromXp(nextXp)
         levelUp = level > (current?.level ?? 0)
+
+        // Calculate streak
+        const yesterday = new Date()
+        yesterday.setDate(yesterday.getDate() - 1)
+        const yesterdayStr = localDate(yesterday, user.timezone || 'UTC')
+        const [yesterdayRow] = await tx.select().from(dailyStats).where(and(
+          eq(dailyStats.userId, user.id),
+          eq(dailyStats.localDate, yesterdayStr),
+        )).limit(1)
+        const prevStreak = current?.currentStreak ?? 0
+        const newStreak = yesterdayRow ? prevStreak + 1 : 1
+        const newLongestStreak = Math.max(current?.longestStreak ?? 0, newStreak)
 
         await tx.insert(userStats).values({
           userId: user.id,
@@ -146,8 +157,8 @@ export default defineEventHandler(async event => {
           totalTimeMs: Math.round(metrics.durationMs),
           xp: nextXp,
           level,
-          currentStreak: 1,
-          longestStreak: 1,
+          currentStreak: newStreak,
+          longestStreak: newLongestStreak,
           lastActiveDate: local,
         }).onConflictDoUpdate({
           target: userStats.userId,
@@ -158,6 +169,8 @@ export default defineEventHandler(async event => {
             totalTimeMs: sql`${userStats.totalTimeMs} + ${Math.round(metrics.durationMs)}`,
             xp: nextXp,
             level,
+            currentStreak: newStreak,
+            longestStreak: newLongestStreak,
             lastActiveDate: local,
             updatedAt: new Date(),
           },

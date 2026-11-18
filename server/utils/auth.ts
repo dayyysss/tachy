@@ -32,7 +32,13 @@ export function getAuth() {
   auth = betterAuth({
     database: drizzleAdapter(getDb(), { provider: 'pg', schema }),
     secret: process.env.BETTER_AUTH_SECRET,
-    baseURL: process.env.BETTER_AUTH_URL || process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    // ponytail: origin decides __Secure- cookie prefix; keep dev on http so the browser can store it
+    baseURL: process.env.NODE_ENV === 'production'
+      ? (process.env.BETTER_AUTH_URL || process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000')
+      : `http://localhost:${process.env.PORT || 3000}`,
+    advanced: {
+      useSecureCookies: process.env.NODE_ENV === 'production',
+    },
     trustedOrigins: Array.from(new Set([
       'http://localhost:3000',
       'http://localhost:*',

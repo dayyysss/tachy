@@ -321,7 +321,7 @@ onMounted(async () => {
           {{ formatDuration(currentTotals.timeMs) }}
         </p>
         <p class="font-mono text-xs text-base-content/50 pt-1">
-          {{ currentTotals.chars.toLocaleString() }} keystrokes registered
+          {{ currentTotals.chars.toLocaleString() }} keystrokes
         </p>
       </Motion>
 
@@ -536,7 +536,7 @@ onMounted(async () => {
         </h2>
         <span class="text-xs font-mono text-base-content/40">Yearly frequency</span>
       </div>
-      <ActivityHeatmap :history="store.history" />
+      <ActivityHeatmap :history="store.history" :server-history="serverHistory" />
     </div>
 
     <!-- 8. PERSONAL BESTS & TEST REPLAYS -->
