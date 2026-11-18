@@ -11,6 +11,23 @@ const props = withDefaults(defineProps<{
 })
 
 const { brand } = useBrand()
+const localePath = useLocalePath()
+const route = useRoute()
+
+const targetPath = computed(() => {
+  if (props.to === null) return null
+  if (!props.to || props.to === '/') return localePath('/')
+  return props.to
+})
+
+function onLogoClick() {
+  const homePath = localePath('/')
+  if (route.path === homePath || route.path === '/') {
+    if (import.meta.client) {
+      window.dispatchEvent(new CustomEvent('tachy-restart-test'))
+    }
+  }
+}
 
 const lightLogo = computed(() => {
   if (props.mark) {
@@ -43,17 +60,18 @@ const defaultSizeClass = computed(() => {
 </script>
 
 <template>
-  <Motion
-    as="div"
-    class="inline-flex items-center"
-    :while-hover="{ scale: 1.03 }"
-    :while-press="{ scale: 0.97 }"
+  <NuxtLink
+    v-if="targetPath"
+    :to="targetPath"
+    class="inline-flex items-center gap-2 cursor-pointer select-none group focus:outline-hidden"
+    aria-label="Tachy home"
+    @click="onLogoClick"
   >
-    <component
-      :is="to ? 'NuxtLink' : 'div'"
-      :to="to || undefined"
+    <Motion
+      as="div"
       class="inline-flex items-center gap-2"
-      aria-label="Tachy home"
+      :while-hover="{ scale: 1.03 }"
+      :while-press="{ scale: 0.97 }"
     >
       <img
         v-if="variant === 'light' && lightLogo"
@@ -102,6 +120,67 @@ const defaultSizeClass = computed(() => {
         <span class="rounded-xl bg-primary/20 px-2 py-1 text-primary border border-primary/30">T</span>
         <span v-if="!mark" class="text-base-content font-sans text-lg font-bold tracking-tight">Tachy</span>
       </div>
-    </component>
-  </Motion>
+    </Motion>
+  </NuxtLink>
+
+  <div
+    v-else
+    class="inline-flex items-center gap-2"
+    aria-label="Tachy home"
+  >
+    <Motion
+      as="div"
+      class="inline-flex items-center gap-2"
+      :while-hover="{ scale: 1.03 }"
+      :while-press="{ scale: 0.97 }"
+    >
+      <img
+        v-if="variant === 'light' && lightLogo"
+        :src="lightLogo"
+        alt="Tachy"
+        class="object-contain transition-all"
+        :class="[imgClass || defaultSizeClass]"
+        :width="mark ? 40 : 160"
+        height="40"
+      >
+      <img
+        v-else-if="variant === 'dark' && darkLogo"
+        :src="darkLogo"
+        alt="Tachy"
+        class="object-contain transition-all"
+        :class="[imgClass || defaultSizeClass]"
+        :width="mark ? 40 : 160"
+        height="40"
+      >
+      <template v-else-if="lightLogo || darkLogo">
+        <img
+          v-if="lightLogo"
+          :src="lightLogo"
+          alt="Tachy"
+          class="brand-logo--light object-contain transition-all"
+          :class="[imgClass || defaultSizeClass]"
+          :width="mark ? 40 : 160"
+          height="40"
+        >
+        <img
+          v-if="darkLogo"
+          :src="darkLogo"
+          alt="Tachy"
+          class="brand-logo--dark object-contain transition-all"
+          :class="[imgClass || defaultSizeClass]"
+          :width="mark ? 40 : 160"
+          height="40"
+        >
+      </template>
+      <!-- Pure CSS/SVG Dynamic Mark Fallback -->
+      <div
+        v-else
+        class="inline-flex items-center gap-2 font-mono font-bold text-primary"
+        :class="[imgClass || defaultSizeClass]"
+      >
+        <span class="rounded-xl bg-primary/20 px-2 py-1 text-primary border border-primary/30">T</span>
+        <span v-if="!mark" class="text-base-content font-sans text-lg font-bold tracking-tight">Tachy</span>
+      </div>
+    </Motion>
+  </div>
 </template>

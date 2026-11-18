@@ -11,6 +11,12 @@ import {
   X,
   ExternalLink,
   ShieldCheck,
+  Share2,
+  Mail,
+  MessageSquare,
+  Github,
+  Twitter,
+  Youtube,
 } from 'lucide-vue-next'
 
 definePageMeta({ middleware: 'admin' })
@@ -28,6 +34,14 @@ interface AdminSettings {
     ogImageFileId: string | null
     defaultRobots: string
     verification: { google: string; bing: string }
+  }
+  social: {
+    email: string
+    github: string
+    discord: string
+    twitter: string
+    bluesky: string
+    youtube: string
   }
 }
 
@@ -49,6 +63,14 @@ const form = reactive<AdminSettings>({
     defaultRobots: 'index,follow',
     verification: { google: '', bing: '' },
   },
+  social: {
+    email: 'support@tachy.app',
+    github: 'https://github.com/dayyysss/tachy',
+    discord: 'https://discord.gg',
+    twitter: 'https://x.com',
+    bluesky: '',
+    youtube: '',
+  },
 })
 
 function toDatetimeLocal(isoString?: string | null): string {
@@ -66,6 +88,16 @@ function toDatetimeLocal(isoString?: string | null): string {
 watch(data, value => {
   if (!value) return
   Object.assign(form, value)
+  if (!form.social) {
+    form.social = {
+      email: 'support@tachy.app',
+      github: 'https://github.com/dayyysss/tachy',
+      discord: 'https://discord.gg',
+      twitter: 'https://x.com',
+      bluesky: '',
+      youtube: '',
+    }
+  }
   if (!form.announcement) {
     form.announcement = { enabled: false, text: '', type: 'info', expiresAt: null }
   } else if (form.announcement.expiresAt) {
@@ -466,6 +498,117 @@ async function save() {
                 placeholder="msvalidate.01 token..."
               >
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: Social Media & Community Channels -->
+      <section class="rounded-2xl border border-base-300 bg-base-200/40 p-5 md:p-6 shadow-xs space-y-5">
+        <div class="border-b border-base-300/80 pb-3">
+          <div class="flex items-center gap-2">
+            <Share2 class="size-4 text-primary" />
+            <h2 class="text-sm font-bold text-base-content">Social Media & Community Channels</h2>
+          </div>
+          <p class="text-xs text-base-content/50 mt-0.5">
+            Public community links and contact channels displayed on the About page and across the platform.
+          </p>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <!-- Support Email -->
+          <div class="space-y-1.5">
+            <label for="social-email" class="text-xs font-bold text-base-content/80 flex items-center gap-1.5">
+              <Mail class="size-3.5 text-primary" />
+              <span>Direct Support Email</span>
+            </label>
+            <input
+              id="social-email"
+              v-model="form.social.email"
+              type="email"
+              class="input input-bordered input-sm w-full text-xs font-mono bg-base-100"
+              placeholder="support@tachy.app"
+            >
+            <p class="text-[10px] text-base-content/40 font-mono">Displayed on the About page with 1-click copy and mailto action</p>
+          </div>
+
+          <!-- Discord Community URL -->
+          <div class="space-y-1.5">
+            <label for="social-discord" class="text-xs font-bold text-base-content/80 flex items-center gap-1.5">
+              <MessageSquare class="size-3.5 text-[#5865F2]" />
+              <span>Discord Community Invite</span>
+            </label>
+            <input
+              id="social-discord"
+              v-model="form.social.discord"
+              type="url"
+              class="input input-bordered input-sm w-full text-xs font-mono bg-base-100"
+              placeholder="https://discord.gg/yourinvite"
+            >
+            <p class="text-[10px] text-base-content/40 font-mono">Link to your public Discord server or community guild</p>
+          </div>
+
+          <!-- GitHub Repository URL -->
+          <div class="space-y-1.5">
+            <label for="social-github" class="text-xs font-bold text-base-content/80 flex items-center gap-1.5">
+              <Github class="size-3.5 text-base-content" />
+              <span>GitHub Repository</span>
+            </label>
+            <input
+              id="social-github"
+              v-model="form.social.github"
+              type="url"
+              class="input input-bordered input-sm w-full text-xs font-mono bg-base-100"
+              placeholder="https://github.com/dayyysss/tachy"
+            >
+            <p class="text-[10px] text-base-content/40 font-mono">Open-source codebase repository, issue tracker, or organization</p>
+          </div>
+
+          <!-- Twitter / X Profile URL -->
+          <div class="space-y-1.5">
+            <label for="social-twitter" class="text-xs font-bold text-base-content/80 flex items-center gap-1.5">
+              <Twitter class="size-3.5 text-base-content" />
+              <span>Twitter / X Profile URL</span>
+            </label>
+            <input
+              id="social-twitter"
+              v-model="form.social.twitter"
+              type="text"
+              class="input input-bordered input-sm w-full text-xs font-mono bg-base-100"
+              placeholder="https://x.com/tachyapp"
+            >
+            <p class="text-[10px] text-base-content/40 font-mono">Full profile URL or handle (e.g. <code class="text-primary">https://x.com/tachyapp</code>)</p>
+          </div>
+
+          <!-- Bluesky Profile URL -->
+          <div class="space-y-1.5">
+            <label for="social-bluesky" class="text-xs font-bold text-base-content/80 flex items-center gap-1.5">
+              <Share2 class="size-3.5 text-info" />
+              <span>Bluesky Profile URL (Optional)</span>
+            </label>
+            <input
+              id="social-bluesky"
+              v-model="form.social.bluesky"
+              type="url"
+              class="input input-bordered input-sm w-full text-xs font-mono bg-base-100"
+              placeholder="https://bsky.app/profile/tachy.app"
+            >
+            <p class="text-[10px] text-base-content/40 font-mono">Decentralized social media profile</p>
+          </div>
+
+          <!-- YouTube Channel URL -->
+          <div class="space-y-1.5">
+            <label for="social-youtube" class="text-xs font-bold text-base-content/80 flex items-center gap-1.5">
+              <Youtube class="size-3.5 text-error" />
+              <span>YouTube Channel (Optional)</span>
+            </label>
+            <input
+              id="social-youtube"
+              v-model="form.social.youtube"
+              type="url"
+              class="input input-bordered input-sm w-full text-xs font-mono bg-base-100"
+              placeholder="https://youtube.com/@tachyapp"
+            >
+            <p class="text-[10px] text-base-content/40 font-mono">Channel for typing tests, speed records, and devlogs</p>
           </div>
         </div>
       </section>

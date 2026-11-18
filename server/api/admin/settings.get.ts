@@ -15,5 +15,6 @@ export default defineEventHandler(async event => {
     flags: (valueOf(rows, 'flags') as object) ?? undefined,
     announcement: valueOf(rows, 'announcement') ?? null,
     seo: (valueOf(rows, 'seo') as object) ?? undefined,
+    social: (valueOf(rows, 'social') as object) ?? undefined,
   })
 })

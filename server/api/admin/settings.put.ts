@@ -11,7 +11,7 @@ export default defineEventHandler(async event => {
 
   const db = getDb()
   await db.transaction(async tx => {
-    for (const key of ['flags', 'announcement', 'seo'] as const) {
+    for (const key of ['flags', 'announcement', 'seo', 'social'] as const) {
       const value = parsed.data[key]
       await tx.insert(siteSettings).values({
         key,

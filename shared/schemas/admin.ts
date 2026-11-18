@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { roles } from '#shared/config/roles'
 import { seoSchema } from './seo'
+import { socialSchema } from './social'
 
 export const adminUsersQuerySchema = z.object({
   q: z.string().max(100).default(''),
@@ -68,6 +69,7 @@ export const adminSettingsSchema = z.object({
     ).default(null),
   }).nullable().default(null),
   seo: seoSchema.default(() => seoSchema.parse({})),
+  social: socialSchema.default(() => socialSchema.parse({})),
 })
 
 export type AdminSettings = z.infer<typeof adminSettingsSchema>

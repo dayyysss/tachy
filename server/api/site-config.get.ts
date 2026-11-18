@@ -2,6 +2,7 @@
 import { siteSettings } from '../db/schema'
 import { getDb, hasDatabase } from '../db'
 import { seoSchema } from '#shared/schemas/seo'
+import { socialSchema } from '#shared/schemas/social'
 
 const defaultFlags = {
   maintenance: false,
@@ -12,9 +13,10 @@ const defaultFlags = {
 
 export default defineEventHandler(async () => {
   const seo = seoSchema.parse({})
+  const social = socialSchema.parse({})
 
   if (!hasDatabase()) {
-    return { flags: defaultFlags, announcement: null, seo }
+    return { flags: defaultFlags, announcement: null, seo, social }
   }
 
   try {
@@ -25,9 +27,10 @@ export default defineEventHandler(async () => {
       flags: { ...defaultFlags, ...(value('flags') as object | undefined) },
       announcement: value('announcement') ?? null,
       seo: { ...seo, ...(value('seo') as object | undefined) },
+      social: { ...social, ...(value('social') as object | undefined) },
     }
   } catch {
-    return { flags: defaultFlags, announcement: null, seo }
+    return { flags: defaultFlags, announcement: null, seo, social }
   }
 })
 

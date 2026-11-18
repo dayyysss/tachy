@@ -25,6 +25,14 @@ function repeat() {
   engine.restart(true)
 }
 
+onMounted(() => {
+  window.addEventListener('tachy-restart-test', restart)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('tachy-restart-test', restart)
+})
+
 const showConfig = computed(() => !settings.value.appearance.focusMode || store.status !== 'running')
 </script>
 

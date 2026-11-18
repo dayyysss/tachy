@@ -158,7 +158,7 @@ defineProps<{
         <div class="text-center">
           <div class="mx-auto mb-3 flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/30 shadow-inner p-2">
             <!-- Tachy Brand Logo Mark -->
-            <BrandLogo mark :to="null" imgClass="size-9 object-contain" />
+            <BrandLogo mark :to="localePath('/')" imgClass="size-9 object-contain" />
           </div>
 
           <h1 class="text-2xl font-bold tracking-tight text-base-content sm:text-3xl">
