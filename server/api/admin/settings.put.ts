@@ -1,6 +1,7 @@
 import { adminSettingsSchema } from '#shared/schemas/admin'
 import { siteSettings } from '../../db/schema/settings'
 import { getDb, hasDatabase } from '../../db'
+import { invalidateSiteFlagsCache } from '../../utils/siteFlags'
 
 export default defineEventHandler(async event => {
   const admin = await requireRole(event, 'admin')
@@ -26,5 +27,6 @@ export default defineEventHandler(async event => {
   })
 
   await writeAudit(event, admin, 'settings.update', 'site_settings', null, null, parsed.data)
+  invalidateSiteFlagsCache()
   return { ok: true }
 })

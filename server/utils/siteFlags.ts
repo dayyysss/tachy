@@ -3,6 +3,10 @@ import { getDb, hasDatabase } from '../db'
 
 let cache: { flags: Record<string, boolean>; at: number } | null = null
 
+export function invalidateSiteFlagsCache() {
+  cache = null
+}
+
 export async function getSiteFlags(): Promise<Record<string, boolean>> {
   const defaults = { maintenance: false, signups: true, leaderboards: true, dailyChallenge: true }
   if (!hasDatabase()) return defaults

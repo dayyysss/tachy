@@ -15,6 +15,9 @@ export default defineEventHandler(async event => {
   // Health check endpoint
   if (path === '/api/health') return
 
+  // Site config endpoint
+  if (path === '/api/site-config') return
+
   // Admin routes and administrative API endpoints
   if (path === loginPath || path.startsWith(`${loginPath}/`) || path === panelBase || path.startsWith(`${panelBase}/`) || path.startsWith('/api/admin')) return
 
@@ -30,9 +33,11 @@ export default defineEventHandler(async event => {
   const flags = await getSiteFlags()
 
   if (flags.maintenance) {
-    // Authenticated administrators bypass maintenance restrictions
-    const user = await getSessionUser(event)
-    if (user?.role === 'admin') return
+    const query = getQuery(event)
+    if (query.bypass === '1') {
+      const user = await getSessionUser(event)
+      if (user?.role === 'admin') return
+    }
 
     throw createError({ statusCode: 503, statusMessage: 'Tachy is under maintenance' })
   }
