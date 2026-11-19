@@ -95,6 +95,7 @@ export default defineNuxtConfig({
     '/api/leaderboard/**': { swr: 30 },
     '/api/stats/**': { swr: 60 },
     '/api/sitemap': { swr: 3600 },
+    '/dashboard': { ssr: false, robots: false },
     '/dashboard/**': { ssr: false, robots: false },
     '/settings': { ssr: false, robots: false },
     [adminLoginPath]: { ssr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },

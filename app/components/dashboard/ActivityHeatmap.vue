@@ -14,6 +14,7 @@ interface DayData {
 const props = defineProps<{
   history: HistoryEntry[]
   serverHistory?: HistoryEntry[]
+  heatmapDays?: { date: string; tests: number; words: number; bestWpm?: number; avgWpm?: number }[]
   weeks?: number
 }>()
 
@@ -23,12 +24,24 @@ const sourceHistory = computed(() => props.serverHistory?.length ? props.serverH
 
 const byDate = computed(() => {
   const map = new Map<string, { tests: number; best: number; words: number }>()
+
+  if (props.heatmapDays?.length) {
+    for (const d of props.heatmapDays) {
+      map.set(d.date, {
+        tests: d.tests,
+        best: d.bestWpm ?? 0,
+        words: d.words ?? 0,
+      })
+    }
+    return map
+  }
+
   for (const entry of sourceHistory.value) {
     const date = localDate(new Date(entry.createdAt))
     const current = map.get(date) ?? { tests: 0, best: 0, words: 0 }
     current.tests++
     current.best = Math.max(current.best, entry.wpm)
-    current.words += entry.wordsTyped
+    current.words += (entry.wordsTyped || 0)
     map.set(date, current)
   }
   return map

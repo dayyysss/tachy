@@ -64,6 +64,7 @@ const bests = ref<{ configKey: string; wpm: number; accuracy: number; achievedAt
 const progress = ref<{ date: string; wpm: number; accuracy: number; tests: number }[]>([])
 const weakKeys = ref<{ key: string; total: number; errors: number; rate: number }[]>([])
 const serverHistory = ref<{ id: string; wpm: number; accuracy: number; mode: string; language: string; createdAt: string }[]>([])
+const heatmapDays = ref<{ date: string; tests: number; words: number; bestWpm: number; avgWpm: number }[]>([])
 
 const recent = computed(() => store.history.slice(0, 10))
 const displayHistory = computed(() => (serverHistory.value.length ? serverHistory.value.slice(0, 10) : recent.value))
@@ -172,16 +173,18 @@ const unlockedSet = computed(() => new Set(remote.value?.achievements?.map(a => 
 onMounted(async () => {
   try {
     remote.value = await $fetch('/api/me/overview')
-    const [pb, trend, weak, history] = await Promise.all([
+    const [pb, trend, weak, history, heatmapRes] = await Promise.all([
       $fetch<{ rows: typeof bests.value }>('/api/me/personal-bests'),
       $fetch<{ points: typeof progress.value }>('/api/me/progress', { query: { range: 30 } }),
       $fetch<{ keys: typeof weakKeys.value }>('/api/me/weak-keys'),
       $fetch<{ rows: typeof serverHistory.value }>('/api/me/history'),
+      $fetch<{ days: typeof heatmapDays.value }>('/api/me/heatmap'),
     ])
     bests.value = pb.rows
     progress.value = trend.points
     weakKeys.value = weak.keys
     serverHistory.value = history.rows
+    heatmapDays.value = heatmapRes.days
   } catch {
     // guests and unconfigured deployments fall back to local history
   }
@@ -536,7 +539,7 @@ onMounted(async () => {
         </h2>
         <span class="text-xs font-mono text-base-content/40">Yearly frequency</span>
       </div>
-      <ActivityHeatmap :history="store.history" :server-history="serverHistory" />
+      <ActivityHeatmap :history="store.history" :server-history="serverHistory" :heatmap-days="heatmapDays" />
     </div>
 
     <!-- 8. PERSONAL BESTS & TEST REPLAYS -->
