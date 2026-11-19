@@ -42,7 +42,7 @@ const links = computed(() => {
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col">
+  <div class="flex min-h-screen flex-col bg-base-100">
     <AnnouncementBanner />
     <header class="chrome sticky top-0 z-40 border-b border-base-300/80 bg-base-100/90 backdrop-blur-md">
       <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-8 lg:px-12">
@@ -194,7 +194,7 @@ const links = computed(() => {
       </nav>
     </header>
 
-    <main class="flex-1">
+    <main class="flex-1 flex flex-col">
       <slot />
     </main>
 

@@ -40,11 +40,18 @@ const showConfig = computed(() => !settings.value.appearance.focusMode || store.
 </script>
 
 <template>
-  <div class="relative min-h-[75vh] w-full overflow-hidden flex flex-col justify-center">
-    <!-- Atmospheric Ambient Background Glows (Ultra-soft) -->
-    <div class="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 size-96 sm:size-[560px] rounded-full bg-primary/[0.035] blur-3xl" />
-    <div class="pointer-events-none absolute top-1/2 -left-28 size-80 sm:size-96 rounded-full bg-secondary/[0.02] blur-3xl" />
-    <div class="pointer-events-none absolute top-1/2 -right-28 size-80 sm:size-96 rounded-full bg-primary/[0.02] blur-3xl" />
+  <div class="relative flex-1 min-h-[75vh] w-full flex flex-col justify-center overflow-x-clip">
+    <!-- Atmospheric Ambient Yellow-to-Dark Center Vignette -->
+    <div
+      class="pointer-events-none absolute inset-0 -z-0 flex items-center justify-center transition-opacity duration-700"
+      :class="store.status === 'running' ? 'opacity-85' : 'opacity-100'"
+      aria-hidden="true"
+    >
+      <div
+        class="size-full"
+        style="background: radial-gradient(ellipse 70% 60% at 50% 50%, color-mix(in oklch, var(--color-primary) 7%, transparent) 0%, color-mix(in oklch, var(--color-primary) 3%, transparent) 35%, color-mix(in oklch, var(--color-primary) 0.8%, transparent) 60%, transparent 75%);"
+      />
+    </div>
 
     <div class="mx-auto flex w-full max-w-7xl flex-col justify-center gap-8 px-4 sm:px-8 lg:px-12 py-8 relative z-10">
       <section class="chrome pt-2 text-center">
@@ -123,12 +130,6 @@ const showConfig = computed(() => !settings.value.appearance.focusMode || store.
               'max-w-7xl': settings.appearance.textWidth === 'wide',
             }"
           >
-            <!-- Soft Diffuse Glow behind typing area -->
-            <div
-              class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] max-w-2xl h-40 sm:h-52 rounded-full bg-primary/[0.04] blur-3xl transition-opacity duration-700"
-              :class="store.status === 'running' ? 'opacity-30' : 'opacity-70'"
-            />
-
             <!-- Soft Decorative Typing Motifs & Viewfinder Accents (Fades gently when running) -->
             <div
               class="pointer-events-none absolute inset-0 select-none transition-opacity duration-500"

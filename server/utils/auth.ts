@@ -33,9 +33,13 @@ export function getAuth() {
     database: drizzleAdapter(getDb(), { provider: 'pg', schema }),
     secret: process.env.BETTER_AUTH_SECRET,
     // ponytail: origin decides __Secure- cookie prefix; keep dev on http so the browser can store it
-    baseURL: process.env.NODE_ENV === 'production'
-      ? (process.env.BETTER_AUTH_URL || process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000')
-      : `http://localhost:${process.env.PORT || 3000}`,
+    baseURL: process.env.BETTER_AUTH_URL && !process.env.BETTER_AUTH_URL.includes('localhost')
+      ? process.env.BETTER_AUTH_URL
+      : process.env.NODE_ENV === 'production'
+        ? (process.env.NUXT_PUBLIC_SITE_URL && !process.env.NUXT_PUBLIC_SITE_URL.includes('localhost')
+            ? process.env.NUXT_PUBLIC_SITE_URL
+            : 'https://tachy.web.id')
+        : (process.env.BETTER_AUTH_URL || `http://localhost:${process.env.PORT || 3000}`),
     advanced: {
       useSecureCookies: process.env.NODE_ENV === 'production',
     },

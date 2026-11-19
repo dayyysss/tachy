@@ -57,7 +57,10 @@ async function signInWith(provider: 'google' | 'github') {
   pending.value = true
   error.value = ''
   try {
-    const callbackURL = route.query.redirect ? String(route.query.redirect) : '/dashboard'
+    const target = route.query.redirect ? String(route.query.redirect) : '/dashboard'
+    const callbackURL = typeof window !== 'undefined'
+      ? `${window.location.origin}${target.startsWith('/') ? target : `/${target}`}`
+      : target
     const res = await $fetch<{ url?: string; redirect?: boolean }>('/api/auth/sign-in/social', {
       method: 'POST',
       body: { provider, callbackURL },

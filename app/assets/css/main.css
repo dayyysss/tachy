@@ -46,6 +46,7 @@
 html,
 body {
   min-height: 100%;
+  background-color: var(--color-base-100);
 }
 
 /* Global Focus & Outline Reset - eliminate harsh browser-default white outlines */
