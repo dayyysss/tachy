@@ -72,6 +72,8 @@ export default defineNuxtConfig({
     description:
       'Free typing test in English, Indonesian, code, and quotes. Track WPM, accuracy, daily streaks, and climb fair leaderboards. No signup needed.',
     defaultLocale: 'en',
+    googleSiteVerification: process.env.GOOGLE_SITE_VERIFICATION,
+    bingSiteVerification: process.env.BING_SITE_VERIFICATION,
   },
   i18n: {
     defaultLocale: 'en',
