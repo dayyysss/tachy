@@ -22,6 +22,9 @@ import {
   ArrowRight,
   Layers,
   History,
+  Gift,
+  X,
+  Star,
 } from 'lucide-vue-next'
 
 useSeo('dashboard')
@@ -169,6 +172,53 @@ const handBalance = computed(() => {
 })
 
 const unlockedSet = computed(() => new Set(remote.value?.achievements?.map(a => a.id) ?? []))
+const selectedBadge = ref<typeof achievements[number] | null>(null)
+
+const totalBadgeXpEarned = computed(() => {
+  return achievements
+    .filter(b => unlockedSet.value.has(b.id))
+    .reduce((sum, b) => sum + (b.reward?.xp || 0), 0)
+})
+
+function getBadgeProgress(badge: typeof achievements[number]) {
+  const peakWpm = Math.max(currentTotals.value.topWpm, todaySummary.value.bestWpm, stats.value.best)
+  const streak = currentTotals.value.streak
+  const words = currentTotals.value.words
+  const tests = currentTotals.value.tests
+
+  switch (badge.kind) {
+    case 'wpm':
+      return {
+        current: peakWpm,
+        target: badge.threshold,
+        unit: 'WPM',
+        pct: Math.min(100, Math.round((peakWpm / badge.threshold) * 100)),
+      }
+    case 'streak':
+      return {
+        current: streak,
+        target: badge.threshold,
+        unit: 'hari',
+        pct: Math.min(100, Math.round((streak / badge.threshold) * 100)),
+      }
+    case 'words':
+      return {
+        current: words,
+        target: badge.threshold,
+        unit: 'kata',
+        pct: Math.min(100, Math.round((words / badge.threshold) * 100)),
+      }
+    case 'tests':
+      return {
+        current: tests,
+        target: badge.threshold,
+        unit: 'tes',
+        pct: Math.min(100, Math.round((tests / badge.threshold) * 100)),
+      }
+    default:
+      return null
+  }
+}
 
 onMounted(async () => {
   try {
@@ -480,26 +530,35 @@ onMounted(async () => {
         <div>
           <h2 class="text-base font-bold flex items-center gap-2">
             <Trophy class="size-4 text-warning" />
-            <span>Tachy Mastery Badges</span>
+            <span>Tachy Mastery Badges & Rewards</span>
           </h2>
-          <p class="text-xs text-base-content/50 font-mono">Milestone trophies unlocked through speed, streaks, and discipline.</p>
+          <p class="text-xs text-base-content/50 font-mono">
+            Buka gelar eksklusif, bonus XP instan, dan prestise visual setiap kali mencapai milestone.
+          </p>
         </div>
-        <span class="text-xs font-mono font-semibold text-primary">
-          {{ unlockedSet.size }} / {{ achievements.length }} Unlocked
-        </span>
+        <div class="flex items-center gap-2.5">
+          <span class="rounded-full border border-warning/40 bg-warning/10 px-3 py-1 text-xs font-mono font-bold text-warning flex items-center gap-1.5 shadow-xs">
+            <Sparkles class="size-3.5" />
+            <span>+{{ totalBadgeXpEarned.toLocaleString() }} XP Diklaim</span>
+          </span>
+          <span class="text-xs font-mono font-semibold text-primary">
+            {{ unlockedSet.size }} / {{ achievements.length }} Unlocked
+          </span>
+        </div>
       </div>
 
       <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 pt-1">
         <div
           v-for="badge in achievements"
           :key="badge.id"
-          class="rounded-2xl border p-3.5 flex flex-col justify-between transition-all"
+          class="rounded-2xl border p-3.5 flex flex-col justify-between transition-all cursor-pointer hover:border-primary/60 hover:scale-[1.02] shadow-xs select-none"
           :class="unlockedSet.has(badge.id)
             ? 'border-primary/40 bg-primary/10 shadow-sm shadow-primary/10'
-            : 'border-base-300/70 bg-base-100/40 opacity-50 grayscale'"
+            : 'border-base-300/70 bg-base-100/40 opacity-70 hover:opacity-100'"
+          @click="selectedBadge = badge"
         >
-          <div>
-            <div class="flex items-center justify-between mb-2">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
               <span class="text-lg">
                 <Award v-if="unlockedSet.has(badge.id)" class="size-5 text-primary" />
                 <Lock v-else class="size-4 text-base-content/40" />
@@ -511,12 +570,139 @@ onMounted(async () => {
                 {{ unlockedSet.has(badge.id) ? 'UNLOCKED' : badge.kind }}
               </span>
             </div>
-            <p class="font-bold text-xs text-base-content tracking-tight line-clamp-1">{{ badge.label }}</p>
-            <p class="text-[10px] text-base-content/60 font-sans mt-0.5 line-clamp-2 leading-tight">{{ badge.description }}</p>
+            <div>
+              <p class="font-bold text-xs text-base-content tracking-tight line-clamp-1">{{ badge.label }}</p>
+              <p class="text-[10px] text-base-content/60 font-sans mt-0.5 line-clamp-2 leading-tight">{{ badge.description }}</p>
+            </div>
+          </div>
+
+          <!-- Reward Perk Pill -->
+          <div class="pt-2.5 mt-2 border-t border-base-300/40">
+            <div
+              class="rounded-lg px-2 py-1 text-[10px] font-mono flex items-center justify-between gap-1"
+              :class="unlockedSet.has(badge.id) ? 'bg-primary/20 text-primary font-bold' : 'bg-base-200/60 text-base-content/60'"
+            >
+              <span class="truncate">🎁 +{{ badge.reward.xp }} XP</span>
+              <span class="truncate opacity-75 font-sans font-medium text-[9px]">{{ badge.reward.title }}</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- BADGE DETAILS & REWARD INSPECTION DIALOG -->
+    <dialog v-if="selectedBadge" class="modal modal-open">
+      <div class="modal-box max-w-md border border-base-300 bg-base-100 p-6 space-y-5 rounded-3xl shadow-2xl relative">
+        <button
+          type="button"
+          class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-base-content/60 hover:text-base-content"
+          @click="selectedBadge = null"
+        >
+          <X class="size-4" />
+        </button>
+
+        <!-- Badge Icon & Header -->
+        <div class="flex items-center gap-4">
+          <div
+            class="size-16 rounded-2xl flex items-center justify-center border shrink-0"
+            :class="unlockedSet.has(selectedBadge.id)
+              ? 'bg-primary/20 border-primary/40 text-primary shadow-lg shadow-primary/20'
+              : 'bg-base-200 border-base-300 text-base-content/40'"
+          >
+            <Award v-if="unlockedSet.has(selectedBadge.id)" class="size-8" />
+            <Lock v-else class="size-8" />
+          </div>
+          <div class="space-y-0.5">
+            <span
+              class="badge badge-xs font-mono text-[10px] uppercase font-bold"
+              :class="unlockedSet.has(selectedBadge.id) ? 'badge-primary' : 'badge-neutral'"
+            >
+              {{ unlockedSet.has(selectedBadge.id) ? 'TERBUKA / CLAIMED' : 'TERKUNCI' }}
+            </span>
+            <h3 class="text-lg font-bold text-base-content">{{ selectedBadge.label }}</h3>
+            <p class="text-xs text-base-content/60 font-sans">{{ selectedBadge.description }}</p>
+          </div>
+        </div>
+
+        <!-- Progress Tracker (If locked) -->
+        <div
+          v-if="!unlockedSet.has(selectedBadge.id) && getBadgeProgress(selectedBadge)"
+          class="rounded-2xl border border-base-300 bg-base-200/50 p-3.5 space-y-2 font-mono text-xs"
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-base-content/60">Target Milestone</span>
+            <span class="font-bold text-base-content">
+              {{ getBadgeProgress(selectedBadge)?.current }} / {{ getBadgeProgress(selectedBadge)?.target }} {{ getBadgeProgress(selectedBadge)?.unit }}
+            </span>
+          </div>
+          <div class="h-2 w-full rounded-full bg-base-300 overflow-hidden">
+            <div
+              class="h-full bg-primary rounded-full transition-all duration-300"
+              :style="{ width: `${getBadgeProgress(selectedBadge)?.pct}%` }"
+            />
+          </div>
+          <div class="text-right text-[10px] text-base-content/50">
+            {{ getBadgeProgress(selectedBadge)?.pct }}% Tercapai
+          </div>
+        </div>
+
+        <!-- REWARDS & BENEFITS BOX -->
+        <div class="rounded-2xl border border-warning/30 bg-warning/5 p-4 space-y-3">
+          <div class="flex items-center gap-2 text-warning font-mono text-xs font-bold uppercase tracking-wider">
+            <Gift class="size-4" />
+            <span>Keuntungan & Reward Badge Ini</span>
+          </div>
+
+          <div class="space-y-2.5">
+            <!-- XP Bonus -->
+            <div class="flex items-center justify-between text-xs font-mono p-2.5 rounded-xl bg-base-100/90 border border-base-300/60 shadow-xs">
+              <span class="flex items-center gap-2 text-base-content/70">
+                <Sparkles class="size-3.5 text-warning" />
+                <span>Bonus Pengalaman</span>
+              </span>
+              <span class="font-bold text-primary tabular-nums">+{{ selectedBadge.reward.xp.toLocaleString() }} XP</span>
+            </div>
+
+            <!-- Profile Title -->
+            <div class="flex items-center justify-between text-xs font-mono p-2.5 rounded-xl bg-base-100/90 border border-base-300/60 shadow-xs">
+              <span class="flex items-center gap-2 text-base-content/70">
+                <Award class="size-3.5 text-primary" />
+                <span>Gelar Profil</span>
+              </span>
+              <span class="font-bold text-base-content">"{{ selectedBadge.reward.title }}"</span>
+            </div>
+
+            <!-- Exclusive Perk -->
+            <div class="flex items-start justify-between text-xs font-mono p-2.5 rounded-xl bg-base-100/90 border border-base-300/60 shadow-xs">
+              <span class="flex items-center gap-2 text-base-content/70 shrink-0">
+                <CheckCircle2 class="size-3.5 text-success" />
+                <span>Perk Eksklusif</span>
+              </span>
+              <span class="font-medium text-base-content/90 text-right text-[11px] font-sans ml-2">
+                {{ selectedBadge.reward.perk }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" class="btn btn-sm btn-ghost font-mono text-xs" @click="selectedBadge = null">
+            Tutup
+          </button>
+          <NuxtLink
+            v-if="!unlockedSet.has(selectedBadge.id)"
+            to="/"
+            class="btn btn-sm btn-primary font-mono text-xs gap-1.5 shadow-xs"
+            @click="selectedBadge = null"
+          >
+            <span>Mulai Tes Mengetik</span>
+            <ArrowRight class="size-3.5" />
+          </NuxtLink>
+        </div>
+      </div>
+      <div class="modal-backdrop bg-black/50" @click="selectedBadge = null" />
+    </dialog>
 
     <!-- 6. 30-DAY WPM PERFORMANCE CURVE -->
     <div v-if="progress.length" class="rounded-2xl border border-base-300 bg-base-200/30 p-5 space-y-4">

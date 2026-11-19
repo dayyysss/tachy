@@ -222,10 +222,35 @@ export default defineEventHandler(async event => {
           }
         }
 
-        if (!current) newAchievements.push('first-test')
-        await tx.insert(userAchievements).values(
-          newAchievements.map(id => ({ userId: user.id, achievementId: id, testId: input.testId })),
-        ).onConflictDoNothing()
+        // Evaluate dynamic achievements
+        const existingAch = await tx.select({ id: userAchievements.achievementId })
+          .from(userAchievements)
+          .where(eq(userAchievements.userId, user.id))
+        const unlockedIds = new Set(existingAch.map(a => a.id))
+
+        if (!unlockedIds.has('first-test')) newAchievements.push('first-test')
+        if (!unlockedIds.has('wpm-40') && metrics.wpm >= 40) newAchievements.push('wpm-40')
+        if (!unlockedIds.has('wpm-60') && metrics.wpm >= 60) newAchievements.push('wpm-60')
+        if (!unlockedIds.has('wpm-80') && metrics.wpm >= 80) newAchievements.push('wpm-80')
+        if (!unlockedIds.has('wpm-100') && metrics.wpm >= 100) newAchievements.push('wpm-100')
+        if (!unlockedIds.has('wpm-120') && metrics.wpm >= 120) newAchievements.push('wpm-120')
+        if (!unlockedIds.has('streak-7') && newStreak >= 7) newAchievements.push('streak-7')
+        if (!unlockedIds.has('streak-30') && newStreak >= 30) newAchievements.push('streak-30')
+        if (!unlockedIds.has('streak-100') && newStreak >= 100) newAchievements.push('streak-100')
+        if (!unlockedIds.has('words-1k') && (current?.totalWords ?? 0) + metrics.wordsTyped >= 1000) newAchievements.push('words-1k')
+        if (!unlockedIds.has('words-10k') && (current?.totalWords ?? 0) + metrics.wordsTyped >= 10000) newAchievements.push('words-10k')
+        if (!unlockedIds.has('words-100k') && (current?.totalWords ?? 0) + metrics.wordsTyped >= 100000) newAchievements.push('words-100k')
+        if (!unlockedIds.has('perfectionist') && metrics.accuracy >= 100 && metrics.durationMs >= 60000) newAchievements.push('perfectionist')
+        if (!unlockedIds.has('marathoner') && metrics.durationMs >= 300000) newAchievements.push('marathoner')
+
+        const currentHour = new Date().getUTCHours()
+        if (!unlockedIds.has('night-owl') && currentHour >= 0 && currentHour <= 4) newAchievements.push('night-owl')
+
+        if (newAchievements.length) {
+          await tx.insert(userAchievements).values(
+            newAchievements.map(id => ({ userId: user.id, achievementId: id, testId: input.testId })),
+          ).onConflictDoNothing()
+        }
       }
     })
   } catch (cause) {

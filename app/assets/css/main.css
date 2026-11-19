@@ -104,6 +104,37 @@ body {
   background-color: transparent !important;
 }
 
+/* Native select & options dark mode enforcement for all OS popup menus (Windows / macOS / Linux) */
+select,
+option,
+optgroup {
+  background-color: var(--color-base-200);
+  color: var(--color-base-content);
+  color-scheme: dark;
+}
+
+optgroup {
+  font-weight: 700;
+  color: var(--color-primary);
+  background-color: var(--color-base-300);
+}
+
+option {
+  background-color: var(--color-base-200);
+  color: var(--color-base-content);
+}
+
+option:checked {
+  background-color: var(--color-primary);
+  color: var(--color-primary-content);
+}
+
+/* DaisyUI menu dropdown wrap fix: force single column and prevent column-wrap / horizontal scrolling */
+.dropdown .menu,
+.dropdown-content.menu {
+  flex-flow: column nowrap !important;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-base-100);

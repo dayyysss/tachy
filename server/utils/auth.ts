@@ -38,14 +38,6 @@ export function getAuth() {
       : `http://localhost:${process.env.PORT || 3000}`,
     advanced: {
       useSecureCookies: process.env.NODE_ENV === 'production',
-      ...(process.env.NODE_ENV === 'production' && (process.env.BETTER_AUTH_URL?.includes('tachy.web.id') || process.env.NUXT_PUBLIC_SITE_URL?.includes('tachy.web.id'))
-        ? {
-            crossSubDomainCookies: {
-              enabled: true,
-              domain: '.tachy.web.id',
-            },
-          }
-        : {}),
     },
     trustedOrigins: Array.from(new Set([
       'http://localhost:3000',
