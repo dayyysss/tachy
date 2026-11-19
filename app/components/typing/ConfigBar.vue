@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { amountOptions, type TestConfig } from '#shared/config/modes'
 import { availableLanguages, codeLanguages } from '#shared/config/languages'
+import { Volume2, VolumeX, Keyboard, ChevronDown, Check, Sliders } from 'lucide-vue-next'
 
 const props = defineProps<{ config: TestConfig; disabled?: boolean }>()
 const emit = defineEmits<{ update: [patch: Partial<TestConfig>] }>()
@@ -9,6 +10,37 @@ const modeGroup = computed(() => props.config.mode)
 const amounts = computed(() => amountOptions[props.config.mode] ?? [])
 
 const dialog = useDialog()
+const { settings } = storeToRefs(useSettingsStore())
+const soundService = useSound()
+
+function setSoundPack(pack: 'mechanical' | 'typewriter' | 'soft') {
+  settings.value.sound.pack = pack
+  settings.value.sound.enabled = true
+  soundService.preview(pack, settings.value.sound.volume)
+}
+
+function setCaretStyle(style: 'line' | 'block' | 'underline' | 'outline') {
+  settings.value.appearance.caretStyle = style
+}
+
+const isLiveHud = computed({
+  get: () => settings.value.appearance.showLiveWpm && settings.value.appearance.showLiveAccuracy,
+  set: (val: boolean) => {
+    settings.value.appearance.showLiveWpm = val
+    settings.value.appearance.showLiveAccuracy = val
+  },
+})
+
+const isStrict = computed({
+  get: () => settings.value.behavior.stopOnError !== 'off',
+  set: (val: boolean) => {
+    settings.value.behavior.stopOnError = val ? 'letter' : 'off'
+  },
+})
+
+function toggleKeyboard() {
+  settings.value.appearance.showKeyboard = !settings.value.appearance.showKeyboard
+}
 
 function setMode(mode: 'time' | 'words' | 'quote' | 'code' | 'zen' | 'custom') {
   if (mode === 'time') emit('update', { mode, contentType: 'words', amount: props.config.mode === 'time' ? props.config.amount : 30 })
@@ -43,7 +75,7 @@ async function customAmount(kind: 'time' | 'words') {
 </script>
 
 <template>
-  <div class="chrome mx-auto flex w-full max-w-5xl flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-5 rounded-2xl border border-base-300/70 bg-base-200/60 px-5 py-2.5 text-sm backdrop-blur-md shadow-xs">
+  <div class="chrome relative z-30 mx-auto flex w-full max-w-6xl flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-5 rounded-2xl border border-base-300/70 bg-base-200/90 px-5 py-2.5 text-sm shadow-xs">
     <!-- 1. MODIFIERS (Punctuation & Numbers) -->
     <div class="flex items-center gap-1.5">
       <button
@@ -244,6 +276,197 @@ async function customAmount(kind: 'time' | 'words') {
           <option value="sequential">sequential</option>
         </select>
       </div>
+    </div>
+
+    <!-- Divider -->
+    <span class="h-4 w-px bg-base-content/15" />
+
+    <!-- 5. TACTILE & IMMERSION (Sound & Virtual Keyboard) -->
+    <div class="flex items-center gap-1.5">
+      <!-- Sound FX Quick Popover -->
+      <div class="dropdown dropdown-bottom dropdown-end">
+        <button
+          tabindex="0"
+          type="button"
+          class="flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-sm font-medium transition-colors cursor-pointer"
+          :class="settings.sound.enabled
+            ? 'bg-primary/15 text-primary font-semibold shadow-2xs'
+            : 'text-base-content/50 hover:text-base-content hover:bg-base-300/40'"
+          :disabled="disabled"
+          title="Sound Effects & Switch Packs"
+        >
+          <Volume2 v-if="settings.sound.enabled" class="size-3.5 shrink-0 text-primary" />
+          <VolumeX v-else class="size-3.5 shrink-0 opacity-60" />
+          <span class="hidden md:inline capitalize">{{ settings.sound.enabled ? settings.sound.pack : 'sound: off' }}</span>
+          <ChevronDown class="size-3 opacity-40 shrink-0" />
+        </button>
+
+        <div
+          tabindex="0"
+          class="dropdown-content z-50 mt-2 w-72 rounded-2xl border border-base-300 bg-base-200 p-3.5 shadow-2xl font-mono text-xs"
+          style="background-color: var(--color-base-200) !important;"
+        >
+          <!-- Master Sound Toggle -->
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-base-300/60">
+            <span class="font-bold text-base-content text-xs flex items-center gap-1.5">
+              <Volume2 class="size-3.5 text-primary" />
+              <span>Sound Effects</span>
+            </span>
+            <input
+              v-model="settings.sound.enabled"
+              type="checkbox"
+              class="toggle toggle-primary toggle-xs"
+              @change="settings.sound.enabled && soundService.preview(settings.sound.pack, settings.sound.volume)"
+            >
+          </div>
+
+          <!-- Switch Pack Selector -->
+          <div class="space-y-1 py-1">
+            <span class="text-[10px] text-base-content/50 uppercase tracking-wider font-semibold">Switch Pack:</span>
+            <div class="grid grid-cols-1 gap-1 pt-1">
+              <button
+                v-for="p in ([
+                  { id: 'mechanical', label: 'Mechanical', desc: 'Clicky switch (220Hz)' },
+                  { id: 'typewriter', label: 'Typewriter', desc: 'Vintage strike (140Hz)' },
+                  { id: 'soft', label: 'Soft', desc: 'Creamy linear (320Hz)' },
+                ] as const)"
+                :key="p.id"
+                type="button"
+                class="flex items-center justify-between px-2.5 py-1.5 rounded-xl border text-left transition-all"
+                :class="settings.sound.enabled && settings.sound.pack === p.id
+                  ? 'border-primary/50 bg-primary/10 text-primary font-bold shadow-2xs'
+                  : 'border-transparent hover:bg-base-300/60 text-base-content/75'"
+                @click="setSoundPack(p.id)"
+              >
+                <div>
+                  <div class="text-xs">{{ p.label }}</div>
+                  <div class="text-[10px] opacity-60 font-sans">{{ p.desc }}</div>
+                </div>
+                <Check v-if="settings.sound.enabled && settings.sound.pack === p.id" class="size-3.5 text-primary shrink-0" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Volume Slider -->
+          <div class="pt-2 mt-2 border-t border-base-300/60 space-y-1">
+            <div class="flex items-center justify-between text-[10px] text-base-content/60">
+              <span>Volume</span>
+              <span class="font-bold text-primary">{{ Math.round((settings.sound.volume ?? 0.4) * 100) }}%</span>
+            </div>
+            <input
+              v-model.number="settings.sound.volume"
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              class="range range-primary range-xs w-full"
+              @input="settings.sound.enabled && soundService.preview(settings.sound.pack, settings.sound.volume)"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Feel & Display Popover (Caret, Live HUD, Blind Mode, Strict Mode) -->
+      <div class="dropdown dropdown-bottom dropdown-end">
+        <button
+          tabindex="0"
+          type="button"
+          class="flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-sm font-medium transition-colors cursor-pointer"
+          :class="(settings.behavior.blindMode || isStrict || isLiveHud || settings.appearance.caretStyle !== 'line')
+            ? 'bg-primary/15 text-primary font-semibold shadow-2xs'
+            : 'text-base-content/50 hover:text-base-content hover:bg-base-300/40'"
+          :disabled="disabled"
+          title="Feel & Telemetry Display Controls"
+        >
+          <Sliders class="size-3.5 shrink-0" />
+          <span class="hidden md:inline capitalize">feel: {{ settings.appearance.caretStyle }}</span>
+          <ChevronDown class="size-3 opacity-40 shrink-0" />
+        </button>
+
+        <div
+          tabindex="0"
+          class="dropdown-content z-50 mt-2 w-72 rounded-2xl border border-base-300 bg-base-200 p-3.5 shadow-2xl font-mono text-xs"
+          style="background-color: var(--color-base-200) !important;"
+        >
+          <!-- Caret Style Selector -->
+          <div class="space-y-1 pb-2 border-b border-base-300/60">
+            <span class="text-[10px] text-base-content/50 uppercase tracking-wider font-semibold">Caret Style:</span>
+            <div class="grid grid-cols-4 gap-1 pt-1">
+              <button
+                v-for="c in ([
+                  { id: 'line', label: '| Line' },
+                  { id: 'block', label: '█ Block' },
+                  { id: 'underline', label: '_ Under' },
+                  { id: 'outline', label: '▢ Box' },
+                ] as const)"
+                :key="c.id"
+                type="button"
+                class="px-1.5 py-1.5 rounded-xl border text-center transition-all text-xs"
+                :class="settings.appearance.caretStyle === c.id
+                  ? 'border-primary/50 bg-primary/15 text-primary font-bold shadow-2xs'
+                  : 'border-base-300/40 bg-base-100/40 hover:bg-base-300/60 text-base-content/75'"
+                @click="setCaretStyle(c.id)"
+              >
+                {{ c.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Telemetry HUD Toggle -->
+          <div class="flex items-center justify-between py-2 border-b border-base-300/60">
+            <div>
+              <div class="font-bold text-base-content text-xs">Live Speedometer</div>
+              <div class="text-[10px] opacity-60 font-sans">Realtime WPM & Accuracy HUD</div>
+            </div>
+            <input
+              v-model="isLiveHud"
+              type="checkbox"
+              class="toggle toggle-primary toggle-xs"
+            >
+          </div>
+
+          <!-- Blind Mode Toggle -->
+          <div class="flex items-center justify-between py-2 border-b border-base-300/60">
+            <div>
+              <div class="font-bold text-base-content text-xs">Blind Mode</div>
+              <div class="text-[10px] opacity-60 font-sans">Hide red errors until test ends</div>
+            </div>
+            <input
+              v-model="settings.behavior.blindMode"
+              type="checkbox"
+              class="toggle toggle-primary toggle-xs"
+            >
+          </div>
+
+          <!-- Strict Mode Toggle -->
+          <div class="flex items-center justify-between pt-2">
+            <div>
+              <div class="font-bold text-base-content text-xs">Strict Mode</div>
+              <div class="text-[10px] opacity-60 font-sans">Must fix error to continue</div>
+            </div>
+            <input
+              v-model="isStrict"
+              type="checkbox"
+              class="toggle toggle-primary toggle-xs"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyboard Visualizer Toggle Button -->
+      <button
+        type="button"
+        class="flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-sm font-medium transition-colors cursor-pointer"
+        :class="settings.appearance.showKeyboard
+          ? 'bg-primary/15 text-primary font-semibold shadow-2xs'
+          : 'text-base-content/50 hover:text-base-content hover:bg-base-300/40'"
+        :disabled="disabled"
+        title="Toggle Mechanical Virtual Keyboard Visualizer"
+        @click="toggleKeyboard"
+      >
+        <Keyboard class="size-3.5 shrink-0" :class="settings.appearance.showKeyboard ? 'text-primary' : 'opacity-70'" />
+        <span class="hidden md:inline">keyboard: {{ settings.appearance.showKeyboard ? 'on' : 'off' }}</span>
+      </button>
     </div>
 
     <!-- Custom text drawer if custom mode -->

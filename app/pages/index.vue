@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { Volume2, VolumeX, Sparkles, ArrowRight } from 'lucide-vue-next'
+import { localDate } from '#shared/utils/dates'
+
 useSeo('home')
 
 const store = useTestStore()
@@ -45,22 +48,34 @@ const showConfig = computed(() => !settings.value.appearance.focusMode || store.
 
     <div class="mx-auto flex w-full max-w-7xl flex-col justify-center gap-8 px-4 sm:px-8 lg:px-12 py-8 relative z-10">
       <section class="chrome pt-2 text-center">
+        <!-- Daily Challenge Notification Pill -->
+        <NuxtLink
+          to="/daily"
+          class="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 hover:bg-primary/20 px-3.5 py-1 text-xs font-mono font-semibold text-primary transition-all shadow-2xs mb-2.5 group cursor-pointer"
+        >
+          <Sparkles class="size-3.5 fill-primary group-hover:scale-110 transition-transform" />
+          <span>Daily Challenge · {{ localDate() }}</span>
+          <ArrowRight class="size-3 opacity-60 group-hover:translate-x-0.5 transition-transform" />
+        </NuxtLink>
         <h1 class="text-xs uppercase tracking-[0.25em] text-base-content/40 font-mono">Tachy typing test</h1>
         <p class="mt-1 text-xs text-base-content/40">Clean, replay-verified typing test. Track WPM and improve accuracy.</p>
       </section>
 
       <ClientOnly>
-        <ConfigBar
-        v-show="showConfig"
-        :config="store.config"
-        @update="updateConfig"
-      />
+        <div class="relative z-30">
+          <ConfigBar
+            v-show="showConfig"
+            :config="store.config"
+            @update="updateConfig"
+          />
+        </div>
 
       <AnimatePresence mode="wait">
         <Motion
           v-if="store.status === 'finished' && store.result"
           key="result-screen"
           as="div"
+          class="relative z-10"
           :initial="{ opacity: 0, y: 16, scale: 0.98 }"
           :animate="{ opacity: 1, y: 0, scale: 1 }"
           :exit="{ opacity: 0, scale: 0.96 }"
@@ -81,7 +96,7 @@ const showConfig = computed(() => !settings.value.appearance.focusMode || store.
           v-else
           key="typing-screen"
           as="div"
-          class="flex flex-col gap-6"
+          class="relative z-10 flex flex-col gap-6"
           :initial="{ opacity: 0 }"
           :animate="{ opacity: 1 }"
           :exit="{ opacity: 0, y: -10 }"
@@ -217,6 +232,28 @@ const showConfig = computed(() => !settings.value.appearance.focusMode || store.
                 <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M7 16h10" />
               </svg>
               <span>keyboard: {{ settings.appearance.showKeyboard ? 'on' : 'off' }}</span>
+            </button>
+            <span class="opacity-30">·</span>
+            <button
+              type="button"
+              class="flex items-center gap-1.5 hover:text-primary transition-colors cursor-pointer"
+              :class="settings.sound.enabled ? 'text-primary font-semibold' : ''"
+              title="Toggle mechanical typing sounds"
+              @click="settings.sound.enabled = !settings.sound.enabled"
+            >
+              <Volume2 v-if="settings.sound.enabled" class="size-3.5 text-primary" />
+              <VolumeX v-else class="size-3.5 opacity-60" />
+              <span class="capitalize">sound: {{ settings.sound.enabled ? settings.sound.pack : 'off' }}</span>
+            </button>
+            <span class="opacity-30">·</span>
+            <button
+              type="button"
+              class="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
+              :class="settings.appearance.showLiveWpm ? 'text-primary font-semibold' : ''"
+              title="Toggle live telemetry speedometer HUD"
+              @click="settings.appearance.showLiveWpm = !settings.appearance.showLiveWpm; settings.appearance.showLiveAccuracy = settings.appearance.showLiveWpm"
+            >
+              <span>hud: {{ settings.appearance.showLiveWpm ? 'on' : 'off' }}</span>
             </button>
           </div>
         </Motion>

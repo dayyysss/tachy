@@ -32,6 +32,11 @@ function playTone(frequency: number, type: OscillatorType, duration: number, vol
 }
 
 export function useSound() {
+  function preview(pack: Settings['sound']['pack'], volume = 0.4) {
+    const target = packs[pack] ?? packs.soft
+    playTone(target.frequency, target.type, target.duration, volume)
+  }
+
   function play(correct: boolean, sound?: Settings['sound']) {
     if (!sound?.enabled) return
     if (!correct && !sound.errorSound) return
@@ -43,5 +48,5 @@ export function useSound() {
     playTone(pack.frequency, pack.type, pack.duration, sound.volume ?? 0.4)
   }
 
-  return { play }
+  return { play, preview }
 }
