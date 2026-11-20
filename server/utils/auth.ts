@@ -15,17 +15,19 @@ export function getAuth() {
   if (!isAuthConfigured()) throw new Error('Auth is not configured')
   if (auth) return auth
 
-  const providers: Record<string, { clientId: string; clientSecret: string }> = {}
+  const providers: Record<string, { clientId: string; clientSecret: string; disableImplicitSignUp?: boolean }> = {}
   if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
     providers.google = {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      disableImplicitSignUp: true,
     }
   }
   if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
     providers.github = {
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      disableImplicitSignUp: true,
     }
   }
 

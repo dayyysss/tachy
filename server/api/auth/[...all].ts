@@ -27,7 +27,7 @@ export default defineEventHandler(async event => {
 
     const escapedTarget = target.replace(/"/g, '&quot;')
     const safeScriptTarget = JSON.stringify(target)
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Redirecting...</title><meta http-equiv="refresh" content="0;url=${escapedTarget}"><script>window.location.replace(${safeScriptTarget});</script></head><body style="background:#17191C;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><p>Redirecting to <a href="${escapedTarget}" style="color:#F4C95D;">dashboard</a>...</p></body></html>`
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Redirecting...</title><meta http-equiv="refresh" content="0;url=${escapedTarget}"><script>window.location.replace(${safeScriptTarget});</script></head><body style="background:#17191C;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><p>Redirecting... <a href="${escapedTarget}" style="color:#F4C95D;">Click here if not redirected</a></p></body></html>`
 
     return new Response(html, {
       status: response.status,

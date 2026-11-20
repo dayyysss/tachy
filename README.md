@@ -65,7 +65,7 @@ Tachy dibangun dengan prinsip integritas kompetitif tinggi. Skor tidak dipercaya
 - **Streak & Daily Challenge**: Memantau konsistensi latihan harian dengan pelacak streak dan misi mengetik harian.
 - **Profil Anggota & Heatmap**: Visualisasi konsistensi latihan tahunan melalui diagram matriks kontribusi 365 hari, rincian rekor terbaik (*personal bests*), serta analisis tombol lemah (*weak keys*).
 
-### 🛡️ Tachos Console (Konsol Admin Stealth & Analitik)
+### 🛡️ Stealth Admin Console & Analitik
 - **Stealth Dynamic Routing**: Gerbang login dan antarmuka kontrol admin beroperasi pada segmen URL kustom tersembunyi (`ADMIN_LOGIN_PATH` / `ADMIN_PANEL_PREFIX`), mengabaikan pemindaian bot umum dengan respons `404 Not Found`.
 - **Diagram Statistik Telemetri 14 Hari**: Diagram SVG responsif adaptif tema DaisyUI pada dashboard ikhtisar yang memvisualisasikan volume sesi harian, kurva kecepatan rata-rata WPM, distribusi mode tes, dan rasio integritas anti-cheat.
 - **Autentikasi Multi-Faktor (2FA TOTP)**: Pengamanan ganda akun administrator dengan Google Authenticator / Authy serta dukungan kode cadangan darurat (*backup recovery codes*).
@@ -161,13 +161,13 @@ cp .env.example .env
 
 Sesuaikan nilai variabel utama pada `.env`:
 ```env
-# Koneksi Database PostgreSQL (Supabase / Neon / Local Postgres)
+# Koneksi Database PostgreSQL
 DATABASE_URL="postgresql://postgres:password@localhost:5432/tachy"
 DIRECT_URL="postgresql://postgres:password@localhost:5432/tachy"
 
-# In-Memory Cache & Leaderboard (Upstash Redis)
-UPSTASH_REDIS_REST_URL="https://your-upstash-redis.upstash.io"
-UPSTASH_REDIS_REST_TOKEN="your-upstash-redis-token"
+# In-Memory Cache & Leaderboard (Redis)
+UPSTASH_REDIS_REST_URL="https://your-redis-instance.upstash.io"
+UPSTASH_REDIS_REST_TOKEN="your-redis-token"
 
 # Rahasia Sesi Better Auth
 BETTER_AUTH_SECRET="kunci-rahasia-autentikasi-minimal-32-karakter"
@@ -177,9 +177,9 @@ NUXT_PUBLIC_SITE_URL="http://localhost:3000"
 # Kunci Tanda Tangan Sesi Anti-Cheat
 TEST_TOKEN_SECRET="kunci-rahasia-tanda-tangan-anti-cheat-sesi"
 
-# Rute Gerbang Admin Stealth (Ganti nilai ini di lingkungan produksi)
-ADMIN_LOGIN_PATH="tachyPanel"
-ADMIN_PANEL_PREFIX="tachos"
+# Rute Gerbang Admin Stealth (Sesuaikan nilai ini untuk keamanan produksi)
+ADMIN_LOGIN_PATH="your-secret-login-path"
+ADMIN_PANEL_PREFIX="your-secret-panel-prefix"
 ADMIN_REQUIRE_2FA="true"
 
 # Penyedia OAuth (Opsional untuk Login Google/GitHub)
@@ -208,7 +208,7 @@ bun run scripts/seed-admin.ts
 ```bash
 bun run dev
 ```
-Buka peramban di [http://localhost:3000](http://localhost:3000). Konsol admin dapat diakses melalui path yang telah dikonfigurasi (default: `http://localhost:3000/tachyPanel`).
+Buka peramban di [http://localhost:3000](http://localhost:3000). Konsol admin dapat diakses melalui path yang telah dikonfigurasi pada environment variable (`ADMIN_LOGIN_PATH`).
 
 ### 6. Pengujian & Kompilasi Produksi
 ```bash
@@ -256,7 +256,7 @@ Tachy dirancang untuk memuaskan indera penglihatan dan pendengaran para pegiat k
 
 Kontribusi kode, penambahan daftar kata bahasa baru, atau pelaporan bug sangat diapresiasi! Silakan ajukan melalui [GitHub Issues](https://github.com/dayyysss/tachy/issues) atau kirimkan Pull Request dengan mengikuti standar kode proyek.
 
-Proyek ini dirilis di bawah naungan lisensi [MIT](LICENSE).
+Proyek ini dirilis di bawah naungan lisensi [GNU General Public License v3.0 (GPL-3.0)](LICENSE).
 
 ---
 

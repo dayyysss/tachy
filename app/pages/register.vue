@@ -14,6 +14,10 @@ const toast = useToast()
 const { fetchSession, user } = useAuth()
 
 onMounted(() => {
+  if (route.query.error) {
+    error.value = 'Gagal mendaftar dengan akun sosial. Silakan coba lagi.'
+  }
+
   if (user.value?.role === 'admin') {
     const config = useRuntimeConfig()
     navigateTo(`${config.public.adminPanelBase || '/tachos'}/dashboard`)
@@ -61,9 +65,12 @@ async function signInWith(provider: 'google' | 'github') {
     const callbackURL = typeof window !== 'undefined'
       ? `${window.location.origin}${target.startsWith('/') ? target : `/${target}`}`
       : target
+    const errorCallbackURL = typeof window !== 'undefined'
+      ? `${window.location.origin}/register`
+      : '/register'
     const res = await $fetch<{ url?: string; redirect?: boolean }>('/api/auth/sign-in/social', {
       method: 'POST',
-      body: { provider, callbackURL },
+      body: { provider, callbackURL, errorCallbackURL, requestSignUp: true },
     })
     if (res?.url) {
       window.location.href = res.url
@@ -116,6 +123,11 @@ async function signInWith(provider: 'google' | 'github') {
           </svg>
           <span>GitHub</span>
         </button>
+      </div>
+
+      <!-- Error Alert -->
+      <div v-if="error" class="rounded-xl border border-warning/30 bg-warning/10 p-3 text-xs text-warning">
+        {{ error }}
       </div>
 
       <div class="relative flex items-center justify-center my-4">
@@ -188,10 +200,6 @@ async function signInWith(provider: 'google' | 'github') {
             </button>
           </div>
           <p class="text-[10px] text-base-content/40 font-mono">Minimum 8 characters</p>
-        </div>
-
-        <div v-if="error" class="rounded-xl border border-warning/30 bg-warning/10 p-2.5 text-xs text-warning">
-          {{ error }}
         </div>
 
         <button

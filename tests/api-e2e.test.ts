@@ -6,15 +6,16 @@ import { eq, or, and } from 'drizzle-orm'
 import sharp from 'sharp'
 
 describe('End-to-End Database & Feature Integrity', () => {
-  it('connects to Neon database successfully', () => {
+  it('connects to PostgreSQL database successfully', () => {
     expect(hasDatabase()).toBe(true)
     const db = getDb()
     expect(db).toBeDefined()
   })
 
-  it('verifies superadmin user exists with admin role in Neon', async () => {
+  it('verifies superadmin user exists with admin role in database', async () => {
     const db = getDb()
-    const [admin] = await db.select().from(user).where(eq(user.email, 'daynibos@gmail.com')).limit(1)
+    const targetEmail = process.env.ADMIN_EMAIL || 'daynibos@gmail.com'
+    const [admin] = await db.select().from(user).where(eq(user.email, targetEmail)).limit(1)
     expect(admin).toBeDefined()
     expect(admin?.role).toBe('admin')
     expect(admin?.emailVerified).toBe(true)
@@ -26,7 +27,7 @@ describe('End-to-End Database & Feature Integrity', () => {
     expect(folder).toBeDefined()
   })
 
-  it('verifies all 5 required brand slots are populated and active in Neon', async () => {
+  it('verifies all 5 required brand slots are populated and active in database', async () => {
     const db = getDb()
     const activeSlots = await db.select({
       slot: brandAssets.slot,

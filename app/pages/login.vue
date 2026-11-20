@@ -52,9 +52,12 @@ async function signInWith(provider: 'google' | 'github') {
     const callbackURL = typeof window !== 'undefined'
       ? `${window.location.origin}${target.startsWith('/') ? target : `/${target}`}`
       : target
+    const errorCallbackURL = typeof window !== 'undefined'
+      ? `${window.location.origin}/login`
+      : '/login'
     const res = await $fetch<{ url?: string; redirect?: boolean }>('/api/auth/sign-in/social', {
       method: 'POST',
-      body: { provider, callbackURL },
+      body: { provider, callbackURL, errorCallbackURL },
     })
     if (res?.url) {
       window.location.href = res.url
@@ -96,6 +99,12 @@ async function verifyTwoFactor() {
 }
 
 onMounted(() => {
+  if (route.query.error === 'signup_disabled') {
+    error.value = 'Akun belum terdaftar. Silakan buat akun terlebih dahulu di form Create Account.'
+  } else if (route.query.error) {
+    error.value = 'Gagal masuk dengan akun sosial. Pastikan akun sudah terdaftar atau coba lagi.'
+  }
+
   if (user.value?.role === 'admin') {
     const config = useRuntimeConfig()
     navigateTo(`${config.public.adminPanelBase || '/tachos'}/dashboard`)
@@ -166,6 +175,16 @@ function backToPassword() {
         </button>
       </div>
 
+      <!-- Error Alert -->
+      <div v-if="error" class="rounded-xl border border-warning/30 bg-warning/10 p-3 text-xs text-warning flex flex-col gap-2">
+        <span>{{ error }}</span>
+        <div v-if="route.query.error === 'signup_disabled'" class="pt-0.5">
+          <NuxtLink :to="localePath('/register')" class="btn btn-warning btn-xs font-semibold">
+            {{ $t('auth.signUp') }} &rarr;
+          </NuxtLink>
+        </div>
+      </div>
+
       <div class="relative flex items-center justify-center my-4">
         <div class="border-t border-base-300 w-full" />
         <span class="bg-base-100 px-3 font-mono text-[10px] uppercase tracking-wider text-base-content/40 absolute rounded">or email</span>
@@ -223,10 +242,6 @@ function backToPassword() {
               </svg>
             </button>
           </div>
-        </div>
-
-        <div v-if="error" class="rounded-xl border border-warning/30 bg-warning/10 p-2.5 text-xs text-warning">
-          {{ error }}
         </div>
 
         <button

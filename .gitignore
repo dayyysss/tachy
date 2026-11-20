@@ -1,11 +1,3 @@
-# AI instructions & specifications
-PRD.md
-AGENTS.md
-.agents
-.opencode
-.claude
-.cursor
-
 # Dependencies & outputs
 node_modules
 .nuxt
