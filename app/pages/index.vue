@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Volume2, VolumeX, Sparkles, ArrowRight } from 'lucide-vue-next'
+import { Volume2, VolumeX, Sparkles, ArrowRight, X } from 'lucide-vue-next'
 import { localDate } from '#shared/utils/dates'
 
 useSeo('home')
@@ -7,6 +7,8 @@ useSeo('home')
 const store = useTestStore()
 const { settings } = storeToRefs(useSettingsStore())
 const engine = useTypingEngine()
+const dismissedDaily = useState('tachy_dismiss_daily', () => false)
+const showDailyPopup = computed(() => !dismissedDaily.value && store.status !== 'running')
 
 useHead(() => ({
   bodyAttrs: {
@@ -55,15 +57,6 @@ const showConfig = computed(() => !settings.value.appearance.focusMode || store.
 
     <div class="mx-auto flex w-full max-w-7xl flex-col justify-center gap-8 px-4 sm:px-8 lg:px-12 py-8 relative z-10">
       <section class="chrome pt-2 text-center">
-        <!-- Daily Challenge Notification Pill -->
-        <NuxtLink
-          to="/daily"
-          class="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 hover:bg-primary/20 px-3.5 py-1 text-xs font-mono font-semibold text-primary transition-all shadow-2xs mb-2.5 group cursor-pointer"
-        >
-          <Sparkles class="size-3.5 fill-primary group-hover:scale-110 transition-transform" />
-          <span>Daily Challenge · {{ localDate() }}</span>
-          <ArrowRight class="size-3 opacity-60 group-hover:translate-x-0.5 transition-transform" />
-        </NuxtLink>
         <h1 class="text-xs uppercase tracking-[0.25em] text-base-content/40 font-mono">Tachy typing test</h1>
         <p class="mt-1 text-xs text-base-content/40">Clean, replay-verified typing test. Track WPM and improve accuracy.</p>
       </section>
@@ -265,5 +258,51 @@ const showConfig = computed(() => !settings.value.appearance.focusMode || store.
         </template>
       </ClientOnly>
     </div>
+
+    <!-- Floating Daily Challenge Alert (Bottom-Right) -->
+    <Transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="transform translate-y-4 opacity-0 scale-95"
+      enter-to-class="transform translate-y-0 opacity-100 scale-100"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="transform translate-y-0 opacity-100 scale-100"
+      leave-to-class="transform translate-y-4 opacity-0 scale-95"
+    >
+      <div
+        v-if="showDailyPopup"
+        class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center"
+        role="complementary"
+        aria-label="Daily Challenge"
+      >
+        <div class="relative group flex items-center gap-3 rounded-2xl border border-primary/25 bg-base-200/90 hover:bg-base-200 p-2.5 sm:p-3 pr-3.5 sm:pr-4 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-primary/50 hover:shadow-primary/5">
+          <NuxtLink
+            to="/daily"
+            class="flex items-center gap-3"
+          >
+            <div class="size-9 rounded-xl bg-primary/10 border border-primary/25 flex items-center justify-center text-primary shrink-0 group-hover:scale-105 transition-transform">
+              <Sparkles class="size-4 fill-primary/30" />
+            </div>
+            <div class="flex flex-col text-left">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs font-semibold text-base-content group-hover:text-primary transition-colors">Daily Challenge</span>
+                <span class="inline-block size-1.5 rounded-full bg-primary animate-pulse" />
+              </div>
+              <span class="text-[11px] font-mono text-base-content/60">{{ localDate() }}</span>
+            </div>
+            <ArrowRight class="size-3.5 text-primary/70 group-hover:text-primary group-hover:translate-x-0.5 transition-all ml-1" />
+          </NuxtLink>
+
+          <button
+            type="button"
+            class="btn btn-ghost btn-xs btn-circle text-base-content/40 hover:text-base-content shrink-0 ml-1 cursor-pointer"
+            title="Dismiss"
+            aria-label="Dismiss daily challenge notification"
+            @click.stop="dismissedDaily = true"
+          >
+            <X class="size-3" />
+          </button>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
